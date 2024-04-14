@@ -52,10 +52,10 @@ class _MQTTViewState extends State<MQTTView>{
       children: <Widget>[
         _buildConnectionStateText(),
         _buildVIRow(currentAppState.getDataJSON),
-        _buildActivePowerRow(),
-        _buildReactivePowerRow(),
-        _buildAparentPowerRow(),
-        _buildPowerFactorRow(),
+        _buildActivePowerRow(currentAppState.getDataJSON),
+        _buildReactivePowerRow(currentAppState.getDataJSON),
+        _buildAparentPowerRow(currentAppState.getDataJSON),
+        _buildPowerFactorRow(currentAppState.getDataJSON),
         _buildConnectButton(currentAppState.getAppConnectionState),
         _buildScrollableTextWith(currentAppState.getReceivedText)
       ],
@@ -101,41 +101,41 @@ class _MQTTViewState extends State<MQTTView>{
   _buildVIRow(ManageData medida) {
       return  Row(
             children: [
-              Expanded(child: MyCard(magnitude: 'Vrms', value: medida.vrms)),
-              Expanded(child: MyCard(magnitude: 'Corriente', value: medida.irms)),
+              Expanded(child: MyCard(magnitude: 'VRMS', value: medida.vrms)),
+              Expanded(child: MyCard(magnitude: 'IRMS', value: medida.irms)),
               
             ],
           );
   }
   
-  _buildActivePowerRow() {
-    return const Row(
+  _buildActivePowerRow(ManageData medida) {
+    return  Row(
             children: [
-              Expanded(child: MyCard(magnitude: 'Potencia activa', value: 4)),
+              Expanded(child: MyCard(magnitude: 'Potencia activa', value: medida.potActiva)),
             ],
           );
   }
   
-  _buildReactivePowerRow() {
-    return const Row(
+  _buildReactivePowerRow(ManageData medida) {
+    return  Row(
             children: [
-              Expanded(child: MyCard(magnitude: 'Potencia reactiva', value: 1)),
+              Expanded(child: MyCard(magnitude: 'Potencia reactiva', value: medida.potReactiva)),
             ],
           );
   }
   
-  _buildAparentPowerRow() {
-    return const Row(
+  _buildAparentPowerRow(ManageData medida) {
+    return  Row(
             children: [
-              Expanded(child: MyCard(magnitude: 'Potencia aparente', value: 5)),
+              Expanded(child: MyCard(magnitude: 'Potencia aparente', value: medida.potAparente)),
             ],
           );
   }
   
-  _buildPowerFactorRow() {
-    return const Row(
+  _buildPowerFactorRow(ManageData medida) {
+    return  Row(
             children: [
-              Expanded(child: MyCard(magnitude: 'Factor de potencia', value: 1)),
+              Expanded(child: MyCard(magnitude: 'Factor de potencia', value: medida.powerFactor)),
             ],
           );
   }
