@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:power_meter/mqtt/mqtt_manager.dart';
+import 'package:power_meter/mqtt/multicast_dns_mqtt.dart';
 import 'package:power_meter/mqtt/state/mqtt_app_state.dart';
 import 'package:power_meter/presentation/items/card.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,7 @@ class _MQTTViewState extends State<MQTTView>{
   /* Variables de estado y management mqtt */
   late MQTTAppState currentAppState;
   late MQTTManager mqttManager;
+  late DiscoverServices discover;
 
   /* Iniciamos el estado del widget */
   @override
@@ -38,12 +40,12 @@ class _MQTTViewState extends State<MQTTView>{
     final Scaffold scaffold = Scaffold(body: _buildColumn());
     return scaffold;
   }
-  Widget _buildAppBar(BuildContext context) {
+  /*Widget _buildAppBar(BuildContext context) {
     return AppBar(
       title: const Text('MQTT'),
       backgroundColor: Colors.teal.shade50,
     );
-  }
+  }*/
   Widget _buildColumn() {
     
     return Column(
@@ -60,16 +62,32 @@ class _MQTTViewState extends State<MQTTView>{
     );
   }
 
-  void _configureAndConnect(){
+ void _configureAndConnect() async {
+  discover = DiscoverServices();
+  await discover.init(); // Espera a que se complete el descubrimiento.
+  discover.startDiscoveryButton(); // Inicia el descubrimiento de servicios.
+  
+  final nsdServiceInfo = await discover.flutterNsd.stream.first;
+  print(nsdServiceInfo.hostname);
+
+  if (nsdServiceInfo != null) {
     mqttManager = MQTTManager(
-      host: '192.168.1.154', 
-      topic: 'broker/measure', 
-      identifier: 'FASTO', 
-      state: currentAppState);
+      host: nsdServiceInfo.hostname?? '', // Set the host to the discovered service name
+      topic: 'broker/measure',
+      identifier: 'FASTO',
+      state: currentAppState,
+    );
 
     mqttManager.initializeMQTTClient();
     mqttManager.connect();
+    // Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
+    } else {
+    print('No se pudo descubrir el servicio mDNS.');
   }
+  
+  // Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
+  discover.stopDiscoveryButton();
+}
   
   _buildConnectionStateText() {
     return const Row( //Estado de conexion

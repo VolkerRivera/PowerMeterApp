@@ -45,7 +45,7 @@ class MQTTManager {
       .withWillMessage('My Will message') //mensaje que publica en ese topic
       .startClean() // Non persistent session for testing. Una sesion limpia no guarda el estado de las conexiones
       .withWillQos(MqttQos.atLeastOnce); //El mensaje de testamento se entregara al menos una vez
-      print('EXAMPLE::Mosquitto client connecting....');
+      print('EXAMPLE:MQTT Client connecting....');
       _client!.connectionMessage = connMess;
   }
 
@@ -54,7 +54,7 @@ class MQTTManager {
   void connect() async {
     assert(_client != null);//verifica que el cliente no sea nulo
     try {
-      print('EXAMPLE::Mosquitto start client connecting....');
+      print('EXAMPLE::MQTT start client connecting....');
       _currentState.setAppConnectionState(MQTTAppConnectionState.connecting); //cambia estado de conexion a conectanado
       await _client!.connect(); //intenta conectarse con el servidor de forma asincrona
     } on Exception catch (e) {//si hay algun error lo printeamos y desconecamos
@@ -94,7 +94,7 @@ class MQTTManager {
   /// The successful connect callback
   void onConnected() {
     _currentState.setAppConnectionState(MQTTAppConnectionState.connected); //cambia el estado de conexion a conectado
-    print('EXAMPLE::Mosquitto client connected....');
+    print('EXAMPLE::MQTT client connected....');
     _client!.subscribe(_topic, MqttQos.atLeastOnce); //se suscribe al tema. garantiza que el mensaje sera entregado al menos una vez
     /*listen se aplica al stream updates, que es un stream que emite una lista de mensajes MQTT 
     recibidos cada vez que llega un nuevo mensaje al cliente. */
