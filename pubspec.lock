@@ -102,6 +102,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  flutter_nsd:
+    dependency: "direct main"
+    description:
+      name: flutter_nsd
+      sha256: fffb27a4b9103b97ef9a97d97c7439ba74b2ac46c1f6d4e948c6494fe53e8cae
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -179,6 +187,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.2.0"
+  multicast_dns:
+    dependency: "direct main"
+    description:
+      name: multicast_dns
+      sha256: "316cc47a958d4bd3c67bd238fe8b44fdfb6133bad89cb191c0c3bd3edb14e296"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.2+6"
   nested:
     dependency: transitive
     description:
@@ -298,4 +314,4 @@ packages:
     version: "13.0.0"
 sdks:
   dart: ">=3.3.2 <4.0.0"
-  flutter: ">=1.16.0"
+  flutter: ">=1.20.0"

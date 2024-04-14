@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MyCard extends StatelessWidget {
   final String magnitude;
-  final int value;
+  final double value;
 
   const MyCard({super.key, required this.magnitude, required this.value});
 

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         //body: const PantallaCosumoActual(),
         body: ChangeNotifierProvider<MQTTAppState>(
           create: (_) => MQTTAppState(),
-          child: MQTTView(),
+          child: const MQTTView(),
         )
       ),
       /*home: ChangeNotifierProvider<MQTTAppState>(

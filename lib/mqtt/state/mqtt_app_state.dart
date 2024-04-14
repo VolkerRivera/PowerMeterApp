@@ -12,8 +12,8 @@ String welcomeToJson(ManageData data) => json.encode(data.toJson()); //entra jso
 
 class ManageData {
     final String timestamp;
-    final int vrms;
-    final int irms;
+    final double vrms;
+    final double irms;
 
     ManageData({
         required this.timestamp,
@@ -44,13 +44,14 @@ class MQTTAppState with ChangeNotifier{
   MQTTAppConnectionState _appConnectionState = MQTTAppConnectionState.disconnected;
   String _receivedText = ''; // lo que se recibe en el topic
   String _historyText = ''; // acumulacion de todo lo que hemos recibido o enviado
-  ManageData _dataJSON = ManageData(timestamp: '0', vrms: 0, irms: 0);
+  ManageData _dataJSON = ManageData(timestamp: '0', vrms: 0.0, irms: 0.0);
   void setReceivedText(String text) { //recibe el texto, modifica y actualiza
     _receivedText = text; // string recibido
     _historyText = '$_historyText\n$_receivedText'; //concatenacion con los anteriores
     try{
       _dataJSON = welcomeFromJson(_receivedText);
     }catch(e){
+      // ignore: avoid_print
       print('El texto recibido no es un JSON válido: $e');
     }
     
