@@ -14,23 +14,40 @@ class ManageData {
     final String timestamp;
     final double vrms;
     final double irms;
+    final double potActiva;
+    final double potReactiva;
+    final double potAparente;
+    final double powerFactor;
 
     ManageData({
         required this.timestamp,
         required this.vrms,
         required this.irms,
+        required this.potActiva,
+        required this.potReactiva,
+        required this.potAparente,
+        required this.powerFactor,
+
     });
 
     factory ManageData.fromJson(Map<String, dynamic> json) => ManageData(
-        timestamp: json["timestamp"],
-        vrms: json["Vrms"],
-        irms: json["Irms"],
+        timestamp:    json["timestamp"],
+        vrms:         json["Vrms"],
+        irms:         json["Irms"], 
+        potActiva:    json["W"], 
+        potReactiva:  json["VAR"], 
+        potAparente:  json["VA"], 
+        powerFactor:  json["PF"],
     );
 
     Map<String, dynamic> toJson() => {
         "timestamp": timestamp,
-        "Vrms": vrms,
-        "Irms": irms,
+        "Vrms"     : vrms,
+        "Irms"     : irms,
+        "W"        : potActiva,
+        "VAR"      : potReactiva,
+        "VA"       : potAparente,
+        "PF"       : powerFactor,
     };
 }
 
@@ -44,7 +61,7 @@ class MQTTAppState with ChangeNotifier{
   MQTTAppConnectionState _appConnectionState = MQTTAppConnectionState.disconnected;
   String _receivedText = ''; // lo que se recibe en el topic
   String _historyText = ''; // acumulacion de todo lo que hemos recibido o enviado
-  ManageData _dataJSON = ManageData(timestamp: '0', vrms: 0.0, irms: 0.0);
+  ManageData _dataJSON = ManageData(timestamp: '0', vrms: 0.0, irms: 0.0, potActiva: 0.0, potReactiva: 0.0, potAparente: 0.0, powerFactor: 0.0);
   void setReceivedText(String text) { //recibe el texto, modifica y actualiza
     _receivedText = text; // string recibido
     _historyText = '$_historyText\n$_receivedText'; //concatenacion con los anteriores

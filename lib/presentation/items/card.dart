@@ -24,10 +24,36 @@ class MyCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(magnitude, style: textStyleMagnitude,),
-            Text('$value V', style: textStyleValue,),
+            Text(valueToRepresent(magnitude, value), style: textStyleValue,),
           ],
         ),
       ),
     );
   }
+}
+
+String valueToRepresent (String magnitude, double value){
+  String valueToRepresent = '';
+  switch(magnitude){
+    case 'VRMS':
+      valueToRepresent = '$value V';
+      break;
+    case 'IRMS':
+      valueToRepresent = '$value A';
+      break;
+    case 'Potencia activa':
+      valueToRepresent = '$value W';
+      break;
+    case 'Potencia reactiva':
+      valueToRepresent = '$value VAR';
+      break;
+    case 'Potencia aparente':
+      valueToRepresent = '$value VA';
+      break;
+    case 'Factor de potencia':
+      valueToRepresent = '$value';
+      break;  
+  }
+
+  return valueToRepresent;
 }
