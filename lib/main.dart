@@ -8,29 +8,89 @@ import 'package:provider/provider.dart';
 
 void main() => runApp(const MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+    int paginaActual = 1;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Power Meter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Consumo actual'),
-        ),
-        //body: const PantallaCosumoActual(),
-        body: ChangeNotifierProvider<MQTTAppState>(
-          create: (_) => MQTTAppState(),
-          child: const MQTTView(),
-        )
+      home: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            return SafeArea(
+              child: Scaffold(
+                appBar: AppBar(
+                  title: const Text('Consumo actual'),
+                ),
+                body: ChangeNotifierProvider<MQTTAppState>(
+                  create: (_) => MQTTAppState(),
+                  child: const MQTTView(),
+                ),
+                bottomNavigationBar:  BottomNavigationBarWidget(paginaActual: paginaActual),
+              ),
+            );
+          } else {
+            return SafeArea(
+              child: Scaffold(
+                appBar: AppBar(
+                  title: const Text('Consumo actual'),
+                ),
+                body: ChangeNotifierProvider<MQTTAppState>(
+                  create: (_) => MQTTAppState(),
+                  child: const Column(
+                    children: [
+                      Expanded(
+                        child: MQTTView(),
+                      )
+                    ],
+                  ),
+                ),
+                bottomNavigationBar:  BottomNavigationBarWidget(paginaActual: paginaActual),
+              ),
+            );
+          }
+        },
       ),
-      /*home: ChangeNotifierProvider<MQTTAppState>(
-          create: (_) => MQTTAppState(),
-          child: MQTTView(),
-        )*/
-
     );
   }
 }
 
+// ignore: must_be_immutable
+class BottomNavigationBarWidget extends StatefulWidget {
+  int paginaActual;
+   BottomNavigationBarWidget({
+    super.key,
+    required this.paginaActual,
+  });
+
+  @override
+  State<BottomNavigationBarWidget> createState() => _BottomNavigationBarWidgetState();
+}
+
+class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      onTap: (index){
+        setState((){
+          widget.paginaActual = index;
+        });
+      },
+      currentIndex: widget.paginaActual,
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.stacked_line_chart_outlined), label: 'Graficos'),
+        BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Consumo instantáneo'),
+        BottomNavigationBarItem(icon: Icon(Icons.person_outline_rounded), label: 'Perfil')
+      ]);
+  }
+}
