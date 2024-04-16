@@ -57,7 +57,10 @@ enum MQTTAppConnectionState { connected, disconnected, connecting }
 alguna de los campos que lo componen, de esta forma, los listeners podran actualizar el UI
 en funcion de dichos cambios */
 
+
+
 class MQTTAppState with ChangeNotifier{
+  
   MQTTAppConnectionState _appConnectionState = MQTTAppConnectionState.disconnected;
   String _receivedText = ''; // lo que se recibe en el topic
   String _historyText = ''; // acumulacion de todo lo que hemos recibido o enviado
@@ -72,7 +75,9 @@ class MQTTAppState with ChangeNotifier{
       print('El texto recibido no es un JSON válido: $e');
     }
     
-    notifyListeners(); // notificacion a los listeners de que algo ha cambiado
+    if (hasListeners) {
+    notifyListeners();
+  }
   }
   void setAppConnectionState(MQTTAppConnectionState state) { // setea el estado de conexion y notifica
     _appConnectionState = state;
