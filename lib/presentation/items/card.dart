@@ -19,7 +19,7 @@ class MyCard extends StatelessWidget {
     );
     return Card(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20), //el padding manual puede hacer que si la pantalla del dispositivo es muy pequeña, al poner la pantalla horizontal desborde
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

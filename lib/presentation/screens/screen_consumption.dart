@@ -90,12 +90,33 @@ class _MQTTViewState extends State<MQTTView>{
 }
   
   _buildConnectionStateText() {
-    return const Row( //Estado de conexion
-            children: [
-              Expanded(
-                child: Text('Estado de conexión',textAlign: TextAlign.center,))
-            ],
-          );
+    String connectionState = '';
+    TextStyle textStyle = const TextStyle(color: Colors.red, fontWeight: FontWeight.bold,);;
+    if(currentAppState.getAppConnectionState == MQTTAppConnectionState.connected) {
+      connectionState = 'Conectado';
+      textStyle = const TextStyle(color: Colors.green, fontWeight: FontWeight.bold);
+    }
+    if(currentAppState.getAppConnectionState == MQTTAppConnectionState.disconnected) {
+      connectionState = 'Desconectado';
+      textStyle = const TextStyle(color: Colors.red, fontWeight: FontWeight.bold);
+    }
+    if(currentAppState.getAppConnectionState == MQTTAppConnectionState.connecting) {
+      connectionState = 'Connectando';
+      textStyle = const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold);
+    }
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row( //Estado de conexion
+              children: [
+                Expanded(
+                  child: Text(
+                    connectionState, 
+                    textAlign: TextAlign.center,
+                    style: textStyle,
+                    ))
+              ],
+            ),
+    );
   }
   
   _buildVIRow(ManageData medida) {
@@ -152,10 +173,14 @@ class _MQTTViewState extends State<MQTTView>{
   }
   
   _buildScrollableTextWith(String mensajeRecibido) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Text(mensajeRecibido),
-      );
-  }
+  return Expanded(
+    child: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Text(mensajeRecibido),
+      ),
+    ),
+  );
+}
 
 }

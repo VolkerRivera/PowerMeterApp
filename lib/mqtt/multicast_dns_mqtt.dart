@@ -2,8 +2,6 @@ import 'package:flutter_nsd/flutter_nsd.dart';
 
 class DiscoverServices {
   final flutterNsd = FlutterNsd();
-
-
   Future<void> init() async {
   final flutterNsd = FlutterNsd();
 
