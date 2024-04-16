@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 //import 'package:mqtt_client/mqtt_client.dart';
 //import 'package:provider/provider.dart';
 
+
+
 void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
@@ -17,80 +19,53 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-    int paginaActual = 1;
+    int _paginaActual = 1; //Widget de la lista que se esta mostrando
+
+    final List<Widget> _paginas = [
+      const Center(child: Text('Gráficos')),
+      const PaginaConsumoActual(),
+      const Center(child: Text('Perfil'))
+    ];
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Power Meter',
-      home: OrientationBuilder(
-        builder: (context, orientation) {
-          if (orientation == Orientation.portrait) {
-            return SafeArea(
+      home: SafeArea(
               child: Scaffold(
                 appBar: AppBar(
-                  title: const Text('Consumo actual'),
+                  centerTitle: true,
+                  title: const Text('ADE9153A'),
                 ),
-                body: ChangeNotifierProvider<MQTTAppState>(
-                  create: (_) => MQTTAppState(),
-                  child: const MQTTView(),
-                ),
-                bottomNavigationBar:  BottomNavigationBarWidget(paginaActual: paginaActual),
+                body: _paginas[_paginaActual],
+                bottomNavigationBar:  BottomNavigationBar( //Gestiona toda la barra de navegación
+                  currentIndex: _paginaActual, //indica la página actual
+                  onTap: (value) {
+                    setState(() {
+                      _paginaActual = value; //actualiza la pagina que se mostrara según donde se haya hecho tap
+                    });
+                  },
+                  items: const [ //array de icons
+                  BottomNavigationBarItem(icon: Icon(Icons.stacked_line_chart_outlined), label: 'Graficos'),
+                  BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Consumo instantáneo'),
+                  BottomNavigationBarItem(icon: Icon(Icons.person_outline_rounded), label: 'Perfil')
+                ]),
               ),
-            );
-          } else {
-            return SafeArea(
-              child: Scaffold(
-                appBar: AppBar(
-                  title: const Text('Consumo actual'),
-                ),
-                body: ChangeNotifierProvider<MQTTAppState>(
-                  create: (_) => MQTTAppState(),
-                  child: const Column(
-                    children: [
-                      Expanded(
-                        child: MQTTView(),
-                      )
-                    ],
-                  ),
-                ),
-                bottomNavigationBar:  BottomNavigationBarWidget(paginaActual: paginaActual),
-              ),
-            );
-          }
-        },
-      ),
+            )
     );
   }
 }
 
-// ignore: must_be_immutable
-class BottomNavigationBarWidget extends StatefulWidget {
-  int paginaActual;
-   BottomNavigationBarWidget({
+class PaginaConsumoActual extends StatelessWidget {
+  const PaginaConsumoActual({
     super.key,
-    required this.paginaActual,
   });
 
   @override
-  State<BottomNavigationBarWidget> createState() => _BottomNavigationBarWidgetState();
-}
-
-class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
-
-  @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      onTap: (index){
-        setState((){
-          widget.paginaActual = index;
-        });
-      },
-      currentIndex: widget.paginaActual,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.stacked_line_chart_outlined), label: 'Graficos'),
-        BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Consumo instantáneo'),
-        BottomNavigationBarItem(icon: Icon(Icons.person_outline_rounded), label: 'Perfil')
-      ]);
+    return ChangeNotifierProvider<MQTTAppState>(
+      create: (_) => MQTTAppState(),
+      child: const MQTTView(),
+    );
   }
 }
