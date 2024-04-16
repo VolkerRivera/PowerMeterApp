@@ -8,7 +8,14 @@ import 'package:provider/provider.dart';
 
 
 
-void main() => runApp(const MyApp());
+void main(){
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => MQTTAppState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
+      child: const MyApp(),
+    ) 
+    );
+}
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -23,7 +30,7 @@ class _MyAppState extends State<MyApp> {
 
     final List<Widget> _paginas = [
       const Center(child: Text('Gráficos')),
-      const PaginaConsumoActual(),
+      const MQTTView(),
       const Center(child: Text('Perfil'))
     ];
 
@@ -56,16 +63,3 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class PaginaConsumoActual extends StatelessWidget {
-  const PaginaConsumoActual({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MQTTAppState>(
-      create: (_) => MQTTAppState(),
-      child: const MQTTView(),
-    );
-  }
-}
