@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:power_meter/data/energia_tiempo.dart';
 import 'package:power_meter/mqtt/state/mqtt_app_state.dart';
+import 'package:power_meter/presentation/items/bar_chart.dart';
+import 'package:power_meter/presentation/items/line_chart.dart';
 import 'package:power_meter/presentation/screens/screen_consumption.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +20,8 @@ void main(){
     );
 }
 
+
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -25,11 +30,29 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
+    
     int _paginaActual = 1; //Widget de la lista que se esta mostrando
 
     final List<Widget> _paginas = [
-      const Center(child: Text('Gráficos')),
+      
+      Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Column(
+                  children: [
+                  LineChartWidget(energiaTiempo),
+                  const SizedBox(height: 30,),
+                  BarChartWidget(costoTiempo),
+                  const SizedBox(height: 30,)
+                  ],
+          ),
+        ),
+        floatingActionButton: Padding(
+          padding:  const EdgeInsets.symmetric(vertical: 20),
+          child: Icon(Icons.settings, size: 50, color: Colors.grey.shade300,),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      ),
       const MQTTView(),
       const Center(child: Text('Perfil'))
     ];
@@ -62,4 +85,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+
 
