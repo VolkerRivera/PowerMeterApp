@@ -23,8 +23,27 @@ class BarChartWidget extends StatelessWidget {
             ],
           ))
         .toList(),
+        titlesData: const FlTitlesData(
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: false,
+                           )
+          ),
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: false,
+            )
+          ),
+          bottomTitles: AxisTitles(
+            axisNameWidget: Text('Tiempo'),
+            axisNameSize: 22,
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 25
+            )
+          )
+        )
         ),
       ),
   );
-  
 }

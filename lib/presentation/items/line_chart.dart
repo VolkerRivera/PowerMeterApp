@@ -20,10 +20,10 @@ class LineChartWidget extends StatelessWidget {
           ),
         ],
         titlesData: FlTitlesData(
-          bottomTitles: AxisTitles( 
+          bottomTitles: AxisTitles( //titulo del eje
             axisNameSize: 20,
             axisNameWidget: const Text("Tiempo"),
-            sideTitles: SideTitles(
+            sideTitles: SideTitles( //contenido del eje, valores numericos
               interval: 1,
               reservedSize: 22,
               showTitles: true,

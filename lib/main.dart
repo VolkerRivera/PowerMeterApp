@@ -35,24 +35,28 @@ class _MyAppState extends State<MyApp> {
 
     final List<Widget> _paginas = [
       
-      Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(30.0),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
           child: Column(
                   children: [
                   LineChartWidget(energiaTiempo),
                   const SizedBox(height: 30,),
                   BarChartWidget(costoTiempo),
-                  const SizedBox(height: 30,)
+                  const SizedBox(height: 20,),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: FloatingActionButton(
+                      child: const Icon(Icons.calendar_month_outlined),
+                      onPressed:() {
+                      
+                    },),
+                  ),
+                  const SizedBox(height: 30,),
                   ],
           ),
         ),
-        floatingActionButton: Padding(
-          padding:  const EdgeInsets.symmetric(vertical: 20),
-          child: Icon(Icons.settings, size: 50, color: Colors.grey.shade300,),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      ),
+
       const MQTTView(),
       const Center(child: Text('Perfil'))
     ];
