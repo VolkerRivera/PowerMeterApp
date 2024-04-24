@@ -40,15 +40,10 @@ class _MQTTViewState extends State<MQTTView>{
     final Scaffold scaffold = Scaffold(body: _buildColumn());
     return scaffold;
   }
-  /*Widget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: const Text('MQTT'),
-      backgroundColor: Colors.teal.shade50,
-    );
-  }*/
+
   Widget _buildColumn() {
     
-    return Column(
+    return Column( //Columna de widgets de la pantalla de en medio
       children: <Widget>[
         _buildConnectionStateText(),
         _buildVIRow(currentAppState.getDataJSON),
@@ -89,7 +84,7 @@ class _MQTTViewState extends State<MQTTView>{
   discover.stopDiscoveryButton();
 }
   
-  _buildConnectionStateText() {
+  _buildConnectionStateText() { //Devuelve el widget que indica el estado de conexion
     String connectionState = '';
     TextStyle textStyle = const TextStyle(color: Colors.red, fontWeight: FontWeight.bold,);;
     if(currentAppState.getAppConnectionState == MQTTAppConnectionState.connected) {
@@ -162,6 +157,7 @@ class _MQTTViewState extends State<MQTTView>{
   }
   
   _buildConnectButton(MQTTAppConnectionState state) {
+    //TODO incluir boton de desconectar
     return TextButton(    
       onPressed: () { 
         state == MQTTAppConnectionState.disconnected 

@@ -6,11 +6,6 @@ import 'package:power_meter/presentation/items/line_chart.dart';
 import 'package:power_meter/presentation/screens/screen_consumption.dart';
 import 'package:provider/provider.dart';
 
-//import 'package:mqtt_client/mqtt_client.dart';
-//import 'package:provider/provider.dart';
-
-
-
 void main(){
   runApp(
     ChangeNotifierProvider(
@@ -19,8 +14,6 @@ void main(){
     ) 
     );
 }
-
-
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -33,20 +26,19 @@ class _MyAppState extends State<MyApp> {
     
     int _paginaActual = 1; //Widget de la lista que se esta mostrando
 
+    //TODO: Las widgets correspondientes a cada pagina solo deben cargar cuando se este en dichas paginas
     final List<Widget> _paginas = [
-      
-
-        Padding(
+        Padding( //< Página 0
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
           child: Column(
                   children: [
-                  LineChartWidget(energiaTiempo),
+                  LineChartWidget(energiaTiempo), //< Grafico de lineas
                   const SizedBox(height: 30,),
-                  BarChartWidget(costoTiempo),
+                  BarChartWidget(costoTiempo), //< Grafico de barras
                   const SizedBox(height: 20,),
                   Align(
                     alignment: Alignment.bottomRight,
-                    child: FloatingActionButton(
+                    child: FloatingActionButton(  //< Boton que ajusta el periodo de medida
                       child: const Icon(Icons.calendar_month_outlined),
                       onPressed:() {
                       
@@ -57,8 +49,8 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
 
-      const MQTTView(),
-      const Center(child: Text('Perfil'))
+      const MQTTView(), //< Página 1
+      const Center(child: Text('Perfil')) //< Página 2
     ];
 
   @override
@@ -89,6 +81,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-
-
