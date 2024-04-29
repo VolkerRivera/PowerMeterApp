@@ -36,20 +36,15 @@ class CostoTiempo{
   
 }
 
-Future<List<CostoTiempo>> get costoTiempo async{
+Future<List<CostoTiempo>> get costoTiempo async{ //Informacion relativa a 1 dia concreto
 
-  /*final priceData = <double>[ //precios SIEMPRE seran por hora
-    0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15,
-    0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20,
-    0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25,
-    0.30, 0.30, 0.30,
-  ];*/
   final GetPricesFromAPI getPricesFromAPI = GetPricesFromAPI();
   final priceData = await getPricesFromAPI.getPrices();
   
   // IMPORTANTE:Esto solo se podra hacer cuando time sea por horas, posteriormente
   // se hara lo mismo para cada dia que pertenezca al intervalo de tiempo y se sumará
   // el precio de cada hora
+
   return priceData 
   .mapIndexed((index, element ) => 
   CostoTiempo(precio: element * energiaTiempo[index].energy , time: index))

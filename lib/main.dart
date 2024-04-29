@@ -3,15 +3,16 @@ import 'package:power_meter/data/energia_tiempo.dart';
 import 'package:power_meter/mqtt/state/mqtt_app_state.dart';
 import 'package:power_meter/presentation/items/bar_chart.dart';
 import 'package:power_meter/presentation/items/line_chart.dart';
-import 'package:power_meter/presentation/screens/screen_consumption.dart';
+import 'package:power_meter/presentation/screens/mqtt_view_screen.dart';
 import 'package:provider/provider.dart';
 
 void main(){
   runApp(
-    ChangeNotifierProvider(
+    /*ChangeNotifierProvider(
       create: (_) => MQTTAppState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
       child: const MyApp(),
-    ) 
+    ) */
+    const MyApp()
     );
 }
 
@@ -49,8 +50,13 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
 
-      const MQTTView(), //< Página 1
-      const Center(child: Text('Perfil')) //< Página 2
+        ChangeNotifierProvider(
+          create: (_) => MQTTAppState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
+          child: const MQTTView(),
+        ), //< Página 1
+
+        const Center(child: Text('Perfil')) //< Página 2
+
     ];
 
   @override

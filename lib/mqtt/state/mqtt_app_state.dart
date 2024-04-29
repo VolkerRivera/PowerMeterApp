@@ -61,30 +61,36 @@ en funcion de dichos cambios */
 
 class MQTTAppState with ChangeNotifier{
   
+  //Estados que vamos a compartir con el resto de los widget
   MQTTAppConnectionState _appConnectionState = MQTTAppConnectionState.disconnected;
   String _receivedText = ''; // lo que se recibe en el topic
   String _historyText = ''; // acumulacion de todo lo que hemos recibido o enviado
   ManageData _dataJSON = ManageData(timestamp: '0', vrms: 0.0, irms: 0.0, potActiva: 0.0, potReactiva: 0.0, potAparente: 0.0, powerFactor: 0.0);
+  
+  //Metodo para modificar el estado de _receivedText y _dataJSON
   void setReceivedText(String text) { //recibe el texto, modifica y actualiza
     _receivedText = text; // string recibido
     _historyText = '$_historyText\n$_receivedText'; //concatenacion con los anteriores
     try{
       _dataJSON = welcomeFromJson(_receivedText);
     }catch(e){
-      // ignore: avoid_print
+      
       print('El texto recibido no es un JSON válido: $e');
     }
     
-    if (hasListeners) {
-    notifyListeners();
-  }
-  }
-  void setAppConnectionState(MQTTAppConnectionState state) { // setea el estado de conexion y notifica
-    _appConnectionState = state;
-    notifyListeners();
+    if (hasListeners) { //si hay listeners, se notifica
+      notifyListeners();
+    }
   }
 
-  //getters
+  //Metodo para modificar el estado de _appConnectionState
+  //Param : nuevo estado
+  void setAppConnectionState(MQTTAppConnectionState state) { // setea el estado de conexion y notifica
+    _appConnectionState = state; //se cambia el estado del objeto de esta clase
+    notifyListeners(); //se notifica a todos los widgets de arriba que esten escuchando
+  }
+
+  //getters del valor actual de estos estados
   String get getReceivedText => _receivedText;
   String get getHistoryText => _historyText;
   MQTTAppConnectionState get getAppConnectionState => _appConnectionState;

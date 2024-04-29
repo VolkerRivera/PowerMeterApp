@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:power_meter/mqtt/mqtt_manager.dart';
 import 'package:power_meter/mqtt/multicast_dns_mqtt.dart';
 import 'package:power_meter/mqtt/state/mqtt_app_state.dart';
 import 'package:power_meter/presentation/items/card.dart';
 import 'package:provider/provider.dart';
+import 'package:multicast_dns/multicast_dns.dart';
 
 class MQTTView extends StatefulWidget{
   const MQTTView({super.key});
@@ -21,6 +24,8 @@ class _MQTTViewState extends State<MQTTView>{
   late MQTTAppState currentAppState;
   late MQTTManager mqttManager;
   late DiscoverServices discover;
+  late String ipMQTTServer;
+  bool firstmDNSscan = true;
 
   /* Iniciamos el estado del widget */
   @override
@@ -58,16 +63,34 @@ class _MQTTViewState extends State<MQTTView>{
   }
 
  void _configureAndConnect() async {
-  discover = DiscoverServices();
-  await discover.init(); // Espera a que se complete el descubrimiento.
-  discover.startDiscoveryButton(); // Inicia el descubrimiento de servicios.
   
-  final nsdServiceInfo = await discover.flutterNsd.stream.first;
-  print(nsdServiceInfo.hostname);
+  if(Platform.isIOS){
+    /* MULTICAST_DNS LIBRARY */
+    const String name = '_mqtt._tcp.local';
+    String ip = '';
+    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+      (dynamic host, int port,
+        {bool? reuseAddress, bool? reusePort, int? ttl}) {
+        return RawDatagramSocket.bind(host, port,
+      reuseAddress: true, reusePort: false, ttl: ttl!);
+    });  
+    await client.start();
+    await for (final PtrResourceRecord ptr in client
+      .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
+      await for (final SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
+        ResourceRecordQuery.service(ptr.domainName))) {
+      final String bundleId =
+          ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
+      print('MQTT Service instance found at '
+          '${srv.target}:${srv.port} for "$bundleId".');
+          ip = srv.name;
+          print(ip);
+      }
+    }
 
-  if (nsdServiceInfo != null) {
+    if (ip != '') {
     mqttManager = MQTTManager(
-      host: nsdServiceInfo.hostname?? '', // Set the host to the discovered service name
+      host: ip, // Set the host to the discovered service name
       topic: 'broker/measure',
       identifier: 'FASTO',
       state: currentAppState,
@@ -75,13 +98,49 @@ class _MQTTViewState extends State<MQTTView>{
 
     mqttManager.initializeMQTTClient();
     mqttManager.connect();
-    // Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
+     //Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
     } else {
-    print('No se pudo descubrir el servicio mDNS.');
+      print('No se pudo descubrir el servicio mDNS.');
+    }
+  
+    // Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
+    client.stop();
   }
   
-  // Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
-  discover.stopDiscoveryButton();
+  if(Platform.isAndroid){
+    if(firstmDNSscan){//la primera vez que se escanea se hace el mDNS scan, el resto no porque ya se tiene la IP
+      discover = DiscoverServices();
+      await discover.init(); // Espera a que se complete el descubrimiento.
+      discover.startDiscoveryButton(); // Inicia el descubrimiento de servicios.
+      final nsdServiceInfo = await discover.flutterNsd.stream.first;
+      print(nsdServiceInfo.hostname);
+      ipMQTTServer = nsdServiceInfo.hostname ?? '';
+      firstmDNSscan = false;
+      discover.stopDiscoveryButton();
+    }
+    //En iOS y macOS de momento no se devuelve el hostAddresses
+    //if (nsdServiceInfo != null) {
+      mqttManager = MQTTManager(
+        host: ipMQTTServer, // Set the host to the discovered service name
+        topic: 'broker/measure',
+        identifier: 'FASTO',
+        state: currentAppState,
+      );
+      mqttManager.initializeMQTTClient();
+      mqttManager.connect();
+     
+      //Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
+    //} else {
+    //  print('No se pudo descubrir el servicio mDNS.');
+    //}
+  
+    // Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
+    //discover.stopDiscoveryButton();
+  }
+}
+
+void _disconnect() {
+  mqttManager.disconnect();
 }
   
   _buildConnectionStateText() { //Devuelve el widget que indica el estado de conexion
@@ -157,14 +216,16 @@ class _MQTTViewState extends State<MQTTView>{
   }
   
   _buildConnectButton(MQTTAppConnectionState state) {
-    //TODO incluir boton de desconectar
+    String textoBoton = state == MQTTAppConnectionState.disconnected 
+          ? 'Conectar'
+          : 'Desconectar';
     return TextButton(    
       onPressed: () { 
         state == MQTTAppConnectionState.disconnected 
           ? _configureAndConnect()
-          :null;
+          : _disconnect();
       },
-      child: const Text('Conectar'),
+      child: Text(textoBoton),
       );
   }
   

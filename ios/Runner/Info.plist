@@ -6,7 +6,7 @@
 	<string>Looking for local tcp Bonjour service</string>
 	<key>NSBonjourServices</key>
 	<array>
-  		<string>mqtt.tcp</string>
+		<string>_mqtt._tcp</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
