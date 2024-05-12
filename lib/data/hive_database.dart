@@ -3,7 +3,7 @@ import 'package:power_meter/presentation/models/expense_item.dart';
 
 class HiveDatabase {
   // reference our box
-  final _myBox = Hive.box('expense_database');
+  final _myBox = Hive.box('expense_database4');
 
   //write data
 void saveData(List<ExpenseItem> allExpense){
@@ -39,7 +39,7 @@ void saveData(List<ExpenseItem> allExpense){
   }
 
   // finally lets store in our database
-  _myBox.put('ALL_EXPENSES', allExpensesFormatted); //(key, data)
+  _myBox.put('ALL_EXPENSES4', allExpensesFormatted); //(key, data)
 
 }
   
@@ -64,7 +64,7 @@ void saveData(List<ExpenseItem> allExpense){
 
     //cogemos los datos que se encuentren asociados a esa llave
     // lista de listas
-    List savedExpenses = _myBox.get('ALL_EXPENSES') ?? []; //si la caja esta vacia dara null asi que devolvemos una lista vacia
+    List savedExpenses = _myBox.get('ALL_EXPENSES4') ?? []; //si la caja esta vacia dara null asi que devolvemos una lista vacia
     
     //lista de ExpenseItem
     List<ExpenseItem> allExpenses = [];

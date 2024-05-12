@@ -11,7 +11,8 @@ Future<void> main() async {
   await Hive.initFlutter();
 
   // open a hive box
-  await Hive.openBox('expense_database');
+  await Hive.deleteBoxFromDisk('expense_database4');
+  await Hive.openBox('expense_database4');
 
   runApp(
     /*ChangeNotifierProvider(

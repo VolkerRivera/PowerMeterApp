@@ -154,12 +154,12 @@ class ExpenseData extends ChangeNotifier{
   ]
    */
 
-  Map<String, double> calculateDailyExpenseSummary() {
+  Map<String, double> calculateDailyExpenseSummaryWeekEuros() {
     // UNICAMENTE TOTAL DIARIO
 
     //inicializammos el mapa
-    Map<String, double> dailyExpenseSummary = {
-      // date (yyyymmd : totalAmountForDay)
+    Map<String, double> dailyExpenseEuroSummary = {
+      // date (yyyymmd : totalAmountForDayEuro)
     };
 
     // iteramos el mapa de tooooooodos los gastos para sacar solo el daily
@@ -168,18 +168,44 @@ class ExpenseData extends ChangeNotifier{
           .dateTime); // Para que irtere bien esta fecha tiene que tener el formato del video
       double amount = double.parse(expense.amountEuro);
 
-      if (dailyExpenseSummary.containsKey(date)) {
+      if (dailyExpenseEuroSummary.containsKey(date)) {
         //suma todos los que coincidan en fecha
-        double currentAmount = dailyExpenseSummary[date]!;
-        currentAmount += currentAmount;
-        dailyExpenseSummary[date] = currentAmount;
+        double currentAmount = dailyExpenseEuroSummary[date]!;
+        currentAmount += amount;
+        dailyExpenseEuroSummary[date] = currentAmount;
       } else {
-        dailyExpenseSummary.addAll(
+        dailyExpenseEuroSummary.addAll(
             {date: amount}); //cuando cambia de dia añade el par date-amount
       }
     }
+    return dailyExpenseEuroSummary;
+  }
 
-    return dailyExpenseSummary;
+  Map<String, double> calculateDailyExpenseSummaryWeekkWh() {
+    // UNICAMENTE TOTAL DIARIO
+
+    //inicializammos el mapa
+    Map<String, double> dailyExpensekWhSummary = {
+      // date (yyyymmd : totalAmountForDay)
+    };
+
+    // iteramos el mapa de tooooooodos los gastos para sacar solo el daily
+    for (var expense in overallExpenseList) {
+      String date = convertDateTimeToString(expense
+          .dateTime); // Para que irtere bien esta fecha tiene que tener el formato del video
+      double amount = double.parse(expense.amountKWh);
+
+      if (dailyExpensekWhSummary.containsKey(date)) {
+        //suma todos los que coincidan en fecha
+        double currentAmount = dailyExpensekWhSummary[date]!;
+        currentAmount += amount;
+        dailyExpensekWhSummary[date] = currentAmount;
+      } else {
+        dailyExpensekWhSummary.addAll(
+            {date: amount}); //cuando cambia de dia añade el par date-amount
+      }
+    }
+    return dailyExpensekWhSummary;
   }
 
   Map<String, double> calculateMonthlyExpenseSummary() {
