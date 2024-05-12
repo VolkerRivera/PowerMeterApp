@@ -102,7 +102,7 @@ class _GraphicsPageState extends State<GraphicsPage> {
   Widget build(BuildContext context) {
     return Consumer<ExpenseData>(
       builder: (context, value, child) => Scaffold( //value es toda la informacion que necesitaremos
-        backgroundColor: Colors.grey.shade200,
+        backgroundColor: Colors.grey.shade50,
 
         floatingActionButton: FloatingActionButton(
           onPressed: addNewExpense, //< Si se pulsa el boton flotante del scaffold se abre el cuadro de dialogo para añadir gastos
@@ -115,8 +115,9 @@ class _GraphicsPageState extends State<GraphicsPage> {
             const SizedBox( height: 20,),
 
             // wekkly summary -> grafico de gastos
-            ExpenseSummaryWeekEuro(startOfWeek: value.startOfWeekDate(), euro: true), // el metodo startOfWeekDate() proviene de ExpenseData
-            ExpenseSummaryWeekEuro(startOfWeek: value.startOfWeekDate(), euro: false)
+            ExpenseSummaryWeek(startOfWeek: value.startOfWeekDate(), euro: true), // el metodo startOfWeekDate() proviene de ExpenseData
+            //ExpenseSummaryWeek(startOfWeek: value.startOfWeekDate(), euro: false),
+            ExpenseSummaryMonth(startOfMonth: DateTime(DateTime.now().year, DateTime.now().month + 1, 1), euro: true)
             //expense list -> lista de gastos
             /*ListView.builder( // siempre que representamos una lista dentro de una lista debemos añadir shrinkwrap y physics:
             shrinkWrap: true, // Creates a scrollable, linear array of widgets that are created on demand.

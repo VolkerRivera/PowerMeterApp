@@ -33,7 +33,7 @@ String convertDateTimeToMonthString (DateTime dateTime){ // en nuestro caso le t
   }
 
   // final format yyyymmdd
-  String yyyymmdd = year + month;
+  String yyyymm = year + month;
 
-  return yyyymmdd; 
+  return yyyymm; 
 }

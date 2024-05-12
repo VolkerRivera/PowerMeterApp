@@ -27,7 +27,7 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                   BarChartRodData(
                     toY: data.precio,
                     width: 10,
-                    color: Colors.blue.shade200,
+                    color: const Color.fromARGB(255, 40, 114, 175),
                   )
                 ],
               ))

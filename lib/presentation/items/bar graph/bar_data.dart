@@ -1,6 +1,6 @@
 import 'package:power_meter/presentation/items/bar%20graph/individual_bar.dart';
 
-class BarData{
+class BarDataWeek{
   final double monAmount;
   final double tueAmount;
   final double wedAmount;
@@ -9,7 +9,7 @@ class BarData{
   final double satAmount;
   final double sunAmount;
 
-  BarData({
+  BarDataWeek({
     required this.monAmount, 
     required this.tueAmount,
     required this.wedAmount, 
@@ -34,4 +34,27 @@ class BarData{
     ];
   }
 
+}
+
+class BarDataMonth{
+  final int numDias;
+  final List<double> values;
+
+  BarDataMonth({
+    required this.numDias,
+    required this.values
+  });
+
+  List<IndividualBar> barData = [];
+
+  // initialize bar data
+
+  void initializeBarData(){
+    for(int i = 0; i < numDias-1; i++){
+      IndividualBar newIndividualBar = IndividualBar(x: i, y: values.elementAt(i));
+      barData.add(newIndividualBar);
+    }
+  }
+
+  
 }

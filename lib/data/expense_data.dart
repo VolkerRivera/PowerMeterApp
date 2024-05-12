@@ -100,36 +100,17 @@ class ExpenseData extends ChangeNotifier{
     // get todays date
     DateTime today = DateTime.now();
 
-    // go backwards form today to find monday
+    // go backwards from today to find monday
     /* this line calculates the date i days before the current date (today). For example, when i is 0, 
     it calculates today's date. When i is 1, it calculates yesterday's date, and so on. */
     for (int i = 0; i < 7; i++) {
-      if (getDayName(today.subtract(Duration(days: i))) == 'L') {
-        // Si hoy es lunes
-        startOfWeek = today.subtract(Duration(days: i));
+      // vamos i dias hacia atras a partir de la fecha de hoy
+      if (getDayName(today.subtract(Duration(days: i))) == 'L') { //va restando días hasta que da con el lunes
+        // Cuando coincide que hace i dias fue lunes, obtenemos la fecha para dicho dia, lo asignamos a startOfWeek y retornamos
+        startOfWeek = today.subtract(Duration(days: i)); // para semanas pasadas bucle [1,7] y asi se retorna el anterior lunes??
       }
     }
     return startOfWeek!; // la exclamacion es cuando estamos seguros de que tendra valor aun siendo nullable
-  }
-
-  DateTime startOfLastSixMonths() {
-    DateTime? startOfLastSix;
-    DateTime today = DateTime.now();
-
-    // Calculate approximate number of days for 6 months (assuming 30.4375 days per month)
-    int approximateDays = 6 * 30.4375.round();
-
-    DateTime previousMonth = today.subtract(Duration(days: approximateDays));
-
-    // Handle cases where the previous month might not have enough days
-    if (previousMonth.month == today.month) {
-      previousMonth =
-          previousMonth.subtract(Duration(days: previousMonth.day - 1));
-    }
-
-    startOfLastSix = previousMonth;
-
-    return startOfLastSix;
   }
 
   /*
@@ -154,12 +135,12 @@ class ExpenseData extends ChangeNotifier{
   ]
    */
 
-  Map<String, double> calculateDailyExpenseSummaryWeekEuros() {
+  Map<String, double> calculateDailyExpenseSummaryEuros() {
     // UNICAMENTE TOTAL DIARIO
 
     //inicializammos el mapa
     Map<String, double> dailyExpenseEuroSummary = {
-      // date (yyyymmd : totalAmountForDayEuro)
+      // date (yyyymmdd : totalAmountForDayEuro)
     };
 
     // iteramos el mapa de tooooooodos los gastos para sacar solo el daily
@@ -181,12 +162,12 @@ class ExpenseData extends ChangeNotifier{
     return dailyExpenseEuroSummary;
   }
 
-  Map<String, double> calculateDailyExpenseSummaryWeekkWh() {
+  Map<String, double> calculateDailyExpenseSummarykWh() {
     // UNICAMENTE TOTAL DIARIO
 
     //inicializammos el mapa
     Map<String, double> dailyExpensekWhSummary = {
-      // date (yyyymmd : totalAmountForDay)
+      // date (yyyymmdd : totalAmountForDay)
     };
 
     // iteramos el mapa de tooooooodos los gastos para sacar solo el daily
