@@ -115,10 +115,10 @@ class _GraphicsPageState extends State<GraphicsPage> {
             const SizedBox( height: 20,),
 
             // wekkly summary -> grafico de gastos
-            ExpenseSummary(startOfWeek: value.startOfWeekDate()), // el metodo startOfWeekDate() proviene de ExpenseData
-
+            ExpenseSummaryWeekEuro(startOfWeek: value.startOfWeekDate(), euro: true), // el metodo startOfWeekDate() proviene de ExpenseData
+            ExpenseSummaryWeekEuro(startOfWeek: value.startOfWeekDate(), euro: false)
             //expense list -> lista de gastos
-            ListView.builder( // siempre que representamos una lista dentro de una lista debemos añadir shrinkwrap y physics:
+            /*ListView.builder( // siempre que representamos una lista dentro de una lista debemos añadir shrinkwrap y physics:
             shrinkWrap: true, // Creates a scrollable, linear array of widgets that are created on demand.
             physics: const NeverScrollableScrollPhysics(), //para que no se pueda scrollear sino que solo muestre lo ultimo
             itemCount: value.getAllExpenseList().length,
@@ -126,7 +126,7 @@ class _GraphicsPageState extends State<GraphicsPage> {
               title: Text(value.getAllExpenseList()[index].amountKWh),
               subtitle: Text(value.getAllExpenseList()[index].dateTime.toString()),
               trailing: Text(value.getAllExpenseList()[index].amountEuro),
-            )),
+            )),*/
           ],
         ),
       ),
