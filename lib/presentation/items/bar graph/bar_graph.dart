@@ -72,7 +72,7 @@ class MyBarGraphWeek extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
-                getTitlesWidget: getBottomTitles
+                getTitlesWidget: getBottomTitlesWeek
               ),
             ),
             
@@ -84,7 +84,7 @@ class MyBarGraphWeek extends StatelessWidget {
             barRods: [
               BarChartRodData(
                 toY: data.y,
-                color: Colors.grey.shade500,
+                color: const Color.fromARGB(255, 130, 108, 255),
                 borderRadius: BorderRadius.circular(2),
                 width: 15.0
               )
@@ -97,7 +97,7 @@ class MyBarGraphWeek extends StatelessWidget {
   }
 }
 
-Widget getBottomTitles(double value, TitleMeta meta){
+Widget getBottomTitlesWeek(double value, TitleMeta meta){
   const style = TextStyle(
     color: Colors.grey,
     fontWeight: FontWeight.bold,
@@ -136,30 +136,52 @@ Widget getBottomTitles(double value, TitleMeta meta){
     child: text);
 }
 
+Widget getBottomTitlesSingleMonth(double value, TitleMeta meta){
+  const style = TextStyle(
+    color: Colors.grey,
+    fontWeight: FontWeight.bold,
+    fontSize: 14,
+  );
+  Widget text = const Text('data', style: style,);  //= Text('${value.toInt() + 1}', style: style);
+
+  for(int i = 0; i <= value.toInt(); i++){
+    text = const Text(' ', style: style);
+  }
+
+  return SideTitleWidget(
+    axisSide: meta.axisSide,
+    child: text);
+}
+
 class MyBarGraphMonth extends StatelessWidget {
   final double? maxY;
   final int numDias;
   final List<double>values;
+  final DateTime startOfMonth;
 
   const MyBarGraphMonth({
     super.key, 
     required this.maxY,
     required this.numDias, 
-    required this.values
+    required this.values,
+    required this.startOfMonth
   });
 
   @override
   Widget build(BuildContext context) {
     BarDataMonth myBarData = BarDataMonth(
       numDias: numDias, 
-      values: values
+      values: values,
+      startOfMonth: startOfMonth
     );
     myBarData.initializeBarData();
+    myBarData.initializeTitleWeekRange();
 
-    return Padding(
+    /*return Padding(
       padding: const EdgeInsets.only(right: 20.0),
       child: LineChart(
         LineChartData(
+          
           gridData: FlGridData(
             show: true,
             drawVerticalLine: false,
@@ -169,7 +191,7 @@ class MyBarGraphMonth extends StatelessWidget {
           borderData: FlBorderData(show: true),
           lineBarsData: [
             LineChartBarData(
-              color: Colors.grey.shade500,
+              color: const Color.fromARGB(255, 130, 108, 255),
               spots: myBarData.barData
               .map((data) => FlSpot(
                 data.x.toDouble(), 
@@ -188,49 +210,90 @@ class MyBarGraphMonth extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: false
               )
-            )
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 30,
+                
+                //interval: 1
+              ),
+            ), 
           )
         )
         ),
-    );
-    /*return BarChart(
-      BarChartData(
-        //config eje y
-        maxY: maxY,
-        minY: 0,
+    );*/
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: BarChart(
+        BarChartData(
+          //config eje y
+          maxY: maxY,
+          minY: 0,
+      
+          //style bar graphic
+          gridData: const FlGridData(
+            show: true,
+            drawHorizontalLine: true,
+            drawVerticalLine: false),
+          borderData: FlBorderData(show: true),
+          titlesData:  FlTitlesData(
+            show: true,
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false, // Oculta el eje derecho
+              ),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false, // Oculta el eje derecho
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true, // Oculta el eje de abajo
+                getTitlesWidget: (value, meta) {
+                  const style = TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  );
+                  Widget text = const Text('data', style: style,);  //= Text('${value.toInt() + 1}', style: style);
 
-        //style bar graphic
-        gridData: const FlGridData(show: false),
-        borderData: FlBorderData(show: false),
-        titlesData: const FlTitlesData(
-          show: true,
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: false, // Oculta el eje derecho
+                  for(int i = 0; i <= value.toInt(); i++){
+                    text = Text(myBarData.titleWeekRange.elementAt(i), style: style);
+                  }
+
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Transform(
+                    origin: Offset(20, 10),
+                    //origin: Offset(20, 20),
+                    transform: Matrix4.identity()..rotateZ(0.8),
+                    alignment: AlignmentDirectional.bottomStart,
+                    child: text));
+                } ,
+                reservedSize: 30
+              ),
             ),
           ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: false, // Oculta el eje derecho
-            ),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true, // Oculta el eje de abajo
-            ),
-          ),
+      
+          //data bar graphic
+          barGroups: myBarData.barData
+          .map((data) => BarChartGroupData(
+            x: data.x, 
+            barRods: [
+              BarChartRodData(
+                toY: data.y,
+                color: const Color.fromARGB(255, 130, 108, 255),
+                borderRadius: BorderRadius.circular(2),
+                width: 15.0
+                )
+            ]
+            ))
+            .toList()
+        )
         ),
-
-        //data bar graphic
-        barGroups: myBarData.barData
-        .map((data) => BarChartGroupData(
-          x: data.x, 
-          barRods: [
-            BarChartRodData(toY: data.y)
-          ]
-          ))
-          .toList()
-      )
-      );*/
+    );
   }
 }

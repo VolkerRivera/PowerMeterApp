@@ -94,11 +94,11 @@ class ExpenseData extends ChangeNotifier{
 
   // get the date for the start of the week (lunes)
 
-  DateTime startOfWeekDate() {
+  DateTime startOfWeekDate(DateTime external) {
     DateTime? startOfWeek;
 
     // get todays date
-    DateTime today = DateTime.now();
+    DateTime today = external;
 
     // go backwards from today to find monday
     /* this line calculates the date i days before the current date (today). For example, when i is 0, 

@@ -5,6 +5,7 @@ import 'package:power_meter/mqtt/state/mqtt_app_state.dart';
 import 'package:power_meter/presentation/screens/graphics_screen.dart';
 import 'package:power_meter/presentation/screens/mqtt_view_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   // initialize hive
@@ -75,6 +76,15 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Power Meter',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale('es'),
+        Locale('es')
+      ],
       home: SafeArea(
               child: Scaffold(
                 appBar: AppBar(

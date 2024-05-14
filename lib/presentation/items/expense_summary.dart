@@ -12,6 +12,8 @@ class ExpenseSummaryWeek extends StatelessWidget {
     required this.startOfWeek, 
     required this.euro});
 
+    
+
     // calculate max amount in bar graph
     double calculateMaxThisWeek( // referente a 1 semana
       ExpenseData value,
@@ -107,6 +109,7 @@ class ExpenseSummaryWeek extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     // get yyyymmdd for each day of this week
     String lunes = convertDateTimeToString(startOfWeek.add(const Duration(days: 0))); // al startOfWeek aka lunes se le añade 0 -> lunes
     String martes = convertDateTimeToString(startOfWeek.add(const Duration(days: 1))); // -> martes ...
@@ -121,7 +124,7 @@ class ExpenseSummaryWeek extends StatelessWidget {
         children: [
           // week total
           Padding(
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
             child: Row(
               children: [
                 RichText(
@@ -129,7 +132,7 @@ class ExpenseSummaryWeek extends StatelessWidget {
                     TextSpan(
                       children: [
                         const TextSpan(
-                          text: 'Total semana: ',
+                          text: 'Total esta semana: ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // Pone el texto en negrita
                             color: Colors.black, // Color del texto
@@ -186,7 +189,9 @@ class ExpenseSummaryMonth extends StatelessWidget {
 
   // calculate num days this month
   int numDiasThisMonth(){
-    DateTime lastOfMonth = startOfMonth.subtract(const Duration(days: 1)); //restamos 1 al primer dia para saber cual es el ultimo del mes
+    //DateTime lastOfMonth = startOfMonth.subtract(const Duration(days: 1)); //restamos 1 al primer dia para saber cual es el ultimo del mes
+    //ultimo dia de mes actual = ( 1 / mes actual + 1 mes / año actual ) - 1 dia
+    DateTime lastOfMonth = DateTime(startOfMonth.year, startOfMonth.month + 1, 1).subtract(const Duration(days: 1));
     int numDias = lastOfMonth.day;
     return numDias;
   }
@@ -194,12 +199,13 @@ class ExpenseSummaryMonth extends StatelessWidget {
   String calculateMonthTotal(ExpenseData value){
     double total = 0;
     int numDias = numDiasThisMonth();
+    //DateTime startThisMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
 
     if(euro){
       // generamos la lista en base al numero de dias
       List<double> values = List<double>.generate(
         numDias, 
-        (int index) =>  value.calculateDailyExpenseSummaryEuros()[convertDateTimeToString(startOfMonth.subtract(Duration(days: index)))] ?? 0, 
+        (int index) =>  value.calculateDailyExpenseSummaryEuros()[convertDateTimeToString(startOfMonth.add(Duration(days: index)))] ?? 0, 
         growable: false);
       
       // calculamos el computo global del mes
@@ -210,7 +216,7 @@ class ExpenseSummaryMonth extends StatelessWidget {
       // generamos la lista en base al numero de dias
       List<double> values = List<double>.generate(
         numDias, 
-        (int index) =>  value.calculateDailyExpenseSummarykWh()[convertDateTimeToString(startOfMonth.subtract(Duration(days: index)))] ?? 0, 
+        (int index) =>  value.calculateDailyExpenseSummarykWh()[convertDateTimeToString(startOfMonth.add(Duration(days: index)))] ?? 0, 
         growable: false);
 
         // calculamos el computo global del mes
@@ -225,12 +231,13 @@ class ExpenseSummaryMonth extends StatelessWidget {
   double calculateMonthMax(ExpenseData value){
     double? max = 100;
     int numDias = numDiasThisMonth();
+    //DateTime startThisMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
 
     if(euro){
       // generamos la lista en base al numero de dias
       List<double> values = List<double>.generate(
         numDias, 
-        (int index) =>  value.calculateDailyExpenseSummaryEuros()[convertDateTimeToString(startOfMonth.subtract(Duration(days: index)))] ?? 0, 
+        (int index) =>  value.calculateDailyExpenseSummaryEuros()[convertDateTimeToString(startOfMonth.add(Duration(days: index)))] ?? 0, 
         growable: false);
       
       //ordenamos valores de menos a mayor
@@ -243,7 +250,7 @@ class ExpenseSummaryMonth extends StatelessWidget {
       // generamos la lista en base al numero de dias
       List<double> values = List<double>.generate(
         numDias, 
-        (int index) =>  value.calculateDailyExpenseSummarykWh()[convertDateTimeToString(startOfMonth.subtract(Duration(days: index)))] ?? 0, 
+        (int index) =>  value.calculateDailyExpenseSummarykWh()[convertDateTimeToString(startOfMonth.add(Duration(days: index)))] ?? 0, 
         growable: false);
 
       //ordenamos valores de menos a mayor
@@ -257,24 +264,26 @@ class ExpenseSummaryMonth extends StatelessWidget {
   }
 
   // list of expenses in a month €
-  List<double> valuesEuro(ExpenseData value){
+  List<double> valuesEuroMonth(ExpenseData value,){
     int numDias = numDiasThisMonth();
+    //DateTime startThisMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
     // generamos la lista en base al numero de dias
     List<double> values = List<double>.generate(
       numDias, 
-      (int index) =>  value.calculateDailyExpenseSummaryEuros()[convertDateTimeToString(startOfMonth.subtract(Duration(days: index)))] ?? 0, 
+      (int index) =>  value.calculateDailyExpenseSummaryEuros()[convertDateTimeToString(startOfMonth.add(Duration(days: index)))] ?? 0, 
       growable: false);
     
     return values;
   }
 
   // list of expenses in a month kWh
-  List<double> valueskWh(ExpenseData value){
+  List<double> valueskWhMonth(ExpenseData value){
     int numDias = numDiasThisMonth();
+    //DateTime startThisMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
     // generamos la lista en base al numero de dias
     List<double> values = List<double>.generate(
       numDias, 
-      (int index) =>  value.calculateDailyExpenseSummarykWh()[convertDateTimeToString(startOfMonth.subtract(Duration(days: index)))] ?? 0, 
+      (int index) =>  value.calculateDailyExpenseSummarykWh()[convertDateTimeToString(startOfMonth.add(Duration(days: index)))] ?? 0, 
       growable: false);
     
     return values;
@@ -284,7 +293,7 @@ class ExpenseSummaryMonth extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Consumer<ExpenseData>(
-      builder: (context, value, child) =>  Column(
+      builder: (context, value, child) =>  Column( // Texto de total mes + gráfico
         children: [
           // week total
           Padding(
@@ -293,16 +302,16 @@ class ExpenseSummaryMonth extends StatelessWidget {
               children: [
                 RichText(
                   text: 
-                    TextSpan(
+                    TextSpan( // Texto plano
                       children: [
                         const TextSpan(
-                          text: 'Total mes: ',
+                          text: 'Total este mes: ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // Pone el texto en negrita
                             color: Colors.black, // Color del texto
                           ),
                         ),
-                        TextSpan(
+                        TextSpan( // consumo.string
                           text: '${calculateMonthTotal(value)} ${euro ? '€' : 'kWh'}',
                           style: const TextStyle(
                           color: Colors.black, // Color del texto
@@ -316,10 +325,11 @@ class ExpenseSummaryMonth extends StatelessWidget {
             ),
           SizedBox( //necesario entender este percal
             height: 200,
-            child: MyBarGraphMonth(
-              maxY: calculateMonthMax(value), 
+            child: MyBarGraphMonth( // grafico de barras mes
+              maxY: calculateMonthMax(value), //value -> ExpenseData 
               numDias: numDiasThisMonth(), 
-              values: euro ? valuesEuro(value) : valueskWh(value)
+              values: euro ? valuesEuroMonth(value) : valueskWhMonth(value),
+              startOfMonth: startOfMonth,
               )),
         ],
       ));
