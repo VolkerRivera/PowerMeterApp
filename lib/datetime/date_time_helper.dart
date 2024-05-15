@@ -43,40 +43,40 @@ String nombreMes(DateTime mes){
   String mesString;
   switch(mes.month){
     case 1:
-      mesString = 'ene';
+      mesString = 'enero';
       break;
     case 2:
-      mesString = 'feb';
+      mesString = 'febrero';
       break;
     case 3:
-      mesString = 'mar';
+      mesString = 'marzo';
       break;
     case 4:
-      mesString = 'abr';
+      mesString = 'abril';
       break;
     case 5:
-      mesString = 'may';
+      mesString = 'mayo';
       break;
     case 6:
-      mesString = 'jun';
+      mesString = 'junio';
       break;
     case 7:
-      mesString = 'jul';
+      mesString = 'julio';
       break;
     case 8:
-      mesString = 'ago';
+      mesString = 'agosto';
       break;
     case 9:
-      mesString = 'sep';
+      mesString = 'septiembre';
       break;
     case 10:
-      mesString = 'oct';
+      mesString = 'octubre';
       break;
     case 11:
-      mesString = 'nov';
+      mesString = 'noviembre';
       break;
     case 12:
-      mesString = 'dic';
+      mesString = 'diciembre';
       break;
     default:
     mesString = '';

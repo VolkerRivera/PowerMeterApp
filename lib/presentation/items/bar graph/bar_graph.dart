@@ -224,13 +224,16 @@ class MyBarGraphMonth extends StatelessWidget {
         ),
     );*/
     return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
+      padding: const EdgeInsets.only(right: 20.0,),
       child: BarChart(
         BarChartData(
           //config eje y
           maxY: maxY,
           minY: 0,
-      
+          /*barTouchData: BarTouchData( //< esto + provider para cambiar datos de semana pinchando en barras, check also GestureDetector
+            touchCallback:(p0, p1) {
+              
+            },),*/
           //style bar graphic
           gridData: const FlGridData(
             show: true,
@@ -267,7 +270,7 @@ class MyBarGraphMonth extends StatelessWidget {
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
                     child: Transform(
-                    origin: Offset(20, 10),
+                    origin: const Offset(20, 10),
                     //origin: Offset(20, 20),
                     transform: Matrix4.identity()..rotateZ(0.8),
                     alignment: AlignmentDirectional.bottomStart,

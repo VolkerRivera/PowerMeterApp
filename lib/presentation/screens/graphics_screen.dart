@@ -32,6 +32,7 @@ class _GraphicsPageState extends State<GraphicsPage> {
 
   // day from calendar
     DateTime _dateTimeWeek = DateTime.now();
+    DateTime _dateTimeMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
 
   // add new expense -> En nuestro caso tendra que ser actualizar datos y recibirlos de la esp
   void addNewExpense(){
@@ -219,6 +220,10 @@ class _GraphicsPageState extends State<GraphicsPage> {
     return startOfWeek!; // la exclamacion es cuando estamos seguros de que tendra valor aun siendo nullable
   }
 
+  DateTime goToFirstDay(DateTime fromThisDay){
+    return DateTime(fromThisDay.year, fromThisDay.month, 1);
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -244,42 +249,79 @@ class _GraphicsPageState extends State<GraphicsPage> {
 
         body: ListView(
           children: [
-            // Espacio
-            //const SizedBox( height: 20,),
-            //Padding(
-            //padding: const EdgeInsets.all(5),
-            //child: 
-            Row(
-              children: [
-                MaterialButton(
-                  onPressed: () {
-                    showDatePicker(
-                      context: context, 
-                      locale: const Locale('es', 'ES'),
-                      currentDate: _dateTimeWeek,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2023), 
-                      lastDate: DateTime(2025)
-                      ).then((value) {
-                       setState(() {
-                        _dateTimeWeek = value ?? _dateTimeWeek;
-                      });
+            Padding(
+              padding: const EdgeInsets.only(top: 0.0),
+              child: MaterialButton(  
+                onPressed: () {
+                  showDatePicker(
+                    context: context, 
+                    locale: const Locale('es', 'ES'),
+                    currentDate: _dateTimeWeek,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2023), 
+                    lastDate: DateTime(2025)
+                    ).then((value) {
+                     setState(() {
+                      _dateTimeWeek = value ?? _dateTimeWeek;
                     });
-                      
-                  }, //abre el caleandario
-                  child: Text( //rango de fecha
-                    '${goToMonday(_dateTimeWeek).day} ${nombreMes(goToMonday(_dateTimeWeek))} - ${goToMonday(_dateTimeWeek).add(const Duration(days: 6)).day} ${nombreMes(goToMonday(_dateTimeWeek).add(const Duration(days: 6)))}',
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  });   
+                }, //abre el caleadario
+                child: Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20, right: 5),
+                      child: Icon(Icons.calendar_month),
                     ),
+                    Text( //rango de fecha
+                      '${goToMonday(_dateTimeWeek).day} ${nombreMes(goToMonday(_dateTimeWeek))} - ${goToMonday(_dateTimeWeek).add(const Duration(days: 6)).day} ${nombreMes(goToMonday(_dateTimeWeek).add(const Duration(days: 6)))}',
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          //),
+
             // wekkly summary -> grafico de gastos
             ExpenseSummaryWeek(startOfWeek: value.startOfWeekDate(_dateTimeWeek), euro: euro), // el metodo startOfWeekDate() proviene de ExpenseData
+
+            Padding(
+              padding: const EdgeInsets.only(top: 30.0),
+              child: MaterialButton(  
+                onPressed: () {
+                  showDatePicker(
+                    context: context, 
+                    locale: const Locale('es', 'ES'),
+                    initialDate: _dateTimeMonth,
+                    firstDate: DateTime(2023), 
+                    lastDate: DateTime(2025)
+                    ).then((value) {
+                     setState(() {
+                      _dateTimeMonth = value ?? _dateTimeMonth;
+                    });
+                  });   
+                }, //abre el caleadario
+                child: Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20, right: 5),
+                      child: Icon(Icons.calendar_month),
+                    ),
+                    Text( //rango de fecha
+                      '${nombreMes(_dateTimeMonth)} ${_dateTimeMonth.year}',
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                  ],
+                ),
+              ),
+            ),
             //ExpenseSummaryWeek(startOfWeek: value.startOfWeekDate(), euro: false),
-            ExpenseSummaryMonth(startOfMonth: DateTime(DateTime.now().year, DateTime.now().month, 1), euro: euro)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30.0),
+              child: ExpenseSummaryMonth(startOfMonth: goToFirstDay(_dateTimeMonth), euro: euro),
+            )
+            
             //expense list -> lista de gastos
             /*ListView.builder( // siempre que representamos una lista dentro de una lista debemos añadir shrinkwrap y physics:
             shrinkWrap: true, // Creates a scrollable, linear array of widgets that are created on demand.

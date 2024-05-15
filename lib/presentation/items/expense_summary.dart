@@ -125,33 +125,36 @@ class ExpenseSummaryWeek extends StatelessWidget {
           // week total
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-            child: Row(
-              children: [
-                RichText(
-                  text: 
-                    TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: 'Total esta semana: ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold, // Pone el texto en negrita
+            child: Padding(
+              padding: const EdgeInsets.only(left: 25.0),
+              child: Row(
+                children: [
+                  RichText(
+                    text: 
+                      TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'Total: ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold, // Pone el texto en negrita
+                              color: Colors.black, // Color del texto
+                            ),
+                          ),
+                          TextSpan(
+                            text: '${calculateWeekTotal(value, lunes, martes, miercoles, jueves, viernes, sabado, domingo)} ${euro ? '€' : 'kWh'}',
+                            style: const TextStyle(
                             color: Colors.black, // Color del texto
+                            ),
                           ),
-                        ),
-                        TextSpan(
-                          text: '${calculateWeekTotal(value, lunes, martes, miercoles, jueves, viernes, sabado, domingo)} ${euro ? '€' : 'kWh'}',
-                          style: const TextStyle(
-                          color: Colors.black, // Color del texto
-                          ),
-                        ),
-                      ],
-                    ),
-                ),
-              ],
+                        ],
+                      ),
+                  ),
+                ],
+              ),
             ),
             ),
           SizedBox( //necesario entender este percal
-            height: 200,
+            height: 275,
             child: euro ?
             MyBarGraphWeek( // es aqui donde se dara valor al grafico
               maxY: calculateMaxThisWeek(value, lunes, martes, miercoles, jueves, viernes, sabado, domingo),
@@ -297,34 +300,37 @@ class ExpenseSummaryMonth extends StatelessWidget {
         children: [
           // week total
           Padding(
-            padding: const EdgeInsets.all(25),
-            child: Row(
-              children: [
-                RichText(
-                  text: 
-                    TextSpan( // Texto plano
-                      children: [
-                        const TextSpan(
-                          text: 'Total este mes: ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold, // Pone el texto en negrita
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 25.0),
+              child: Row(
+                children: [
+                  RichText(
+                    text: 
+                      TextSpan( // Texto plano
+                        children: [
+                          const TextSpan(
+                            text: 'Total: ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold, // Pone el texto en negrita
+                              color: Colors.black, // Color del texto
+                            ),
+                          ),
+                          TextSpan( // consumo.string
+                            text: '${calculateMonthTotal(value)} ${euro ? '€' : 'kWh'}',
+                            style: const TextStyle(
                             color: Colors.black, // Color del texto
+                            ),
                           ),
-                        ),
-                        TextSpan( // consumo.string
-                          text: '${calculateMonthTotal(value)} ${euro ? '€' : 'kWh'}',
-                          style: const TextStyle(
-                          color: Colors.black, // Color del texto
-                          ),
-                        ),
-                      ],
-                    ),
-                ),
-              ],
+                        ],
+                      ),
+                  ),
+                ],
+              ),
             ),
             ),
           SizedBox( //necesario entender este percal
-            height: 200,
+            height: 275,
             child: MyBarGraphMonth( // grafico de barras mes
               maxY: calculateMonthMax(value), //value -> ExpenseData 
               numDias: numDiasThisMonth(), 
