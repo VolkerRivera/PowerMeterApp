@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:power_meter/data/expense_data.dart';
-import 'package:power_meter/mqtt/state/mqtt_app_state.dart';
+import 'package:power_meter/mqtt/state/mqtt_power_state.dart';
+import 'package:power_meter/mqtt/state/mqtt_register_state.dart';
 import 'package:power_meter/presentation/screens/graphics_screen.dart';
 import 'package:power_meter/presentation/screens/mqtt_view_screen.dart';
 import 'package:provider/provider.dart';
@@ -17,10 +18,21 @@ Future<void> main() async {
 
   runApp(
     /*ChangeNotifierProvider(
-      create: (_) => MQTTAppState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
+      create: (_) => MQTTRegisterState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
       child: const MyApp(),
     ) */
-    const MyApp()
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => MQTTRegisterState(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MQTTPowerState(), 
+        ),
+      ],
+      child: const MyApp(),
+    )
+    //const MyApp()
     );
 }
 
@@ -63,11 +75,11 @@ class _MyAppState extends State<MyApp> {
           builder: (context, child) => const GraphicsPage() // el widget que escucha
         ),
 
-        ChangeNotifierProvider(
-          create: (_) => MQTTAppState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
+        /*ChangeNotifierProvider(
+          create: (_) => MQTTPowerState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
           child: const MQTTView(),
-        ), //< Página 1
-
+        ), //< Página 1*/
+        const MQTTView(),
         const Center(child: Text('Perfil')) //< Página 2
 
     ];

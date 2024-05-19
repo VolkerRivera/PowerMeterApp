@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:power_meter/data/expense_data.dart';
 import 'package:power_meter/datetime/date_time_helper.dart';
+import 'package:power_meter/mqtt/state/mqtt_register_state.dart';
 import 'package:power_meter/presentation/items/expense_summary.dart';
 import 'package:power_meter/presentation/models/expense_item.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ class _GraphicsPageState extends State<GraphicsPage> {
   final newExpenseAmountController = TextEditingController();
   bool euro = true;
   bool semana = true;
+  late MQTTRegisterState currentRegisterState;
 
   @override
   void initState() {
@@ -27,13 +29,33 @@ class _GraphicsPageState extends State<GraphicsPage> {
 
     //prepare data 
     Provider.of<ExpenseData>(context, listen: false).prepareData();
-
+    currentRegisterState = Provider.of<MQTTRegisterState>(context, listen: false);
+    currentRegisterState.addListener(_onRegisterStateChange);
   }
 
   // day from calendar
     DateTime _dateTimeWeek = DateTime.now();
     DateTime _dateTimeMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
 
+  // add data automatically
+
+  void _onRegisterStateChange() {
+    // Esta función se llamará solo cuando MQTTRegisterState notifique un cambio
+    if(mounted){
+      final expenseData = Provider.of<ExpenseData>(context, listen: false);
+      final registerData = currentRegisterState.getNewExpense; 
+
+      if ( registerData != null ) {
+      expenseData.addNewExpense(registerData);
+      //registerState.clearReceivedText();
+      }
+    }
+    
+  }
+
+  void addExpenseFromMQTT(ExpenseItem newExpense){
+    Provider.of<ExpenseData>(context, listen: false).addNewExpense(newExpense);
+  }
   // add new expense -> En nuestro caso tendra que ser actualizar datos y recibirlos de la esp
   void addNewExpense(){
     showDialog(
@@ -226,9 +248,21 @@ class _GraphicsPageState extends State<GraphicsPage> {
 
   @override
   Widget build(BuildContext context) {
+    //final MQTTRegisterState registerState = Provider.of<MQTTRegisterState>(context, listen: false);
+    //currentRegisterState = registerState;
 
     return Consumer<ExpenseData>( // se retorna un Scaffold
-      builder: (context, value, child) => Scaffold( //value es toda la informacion que necesitaremos
+      builder: (context, value, child)  { // nuevo, antes => Scaffold...
+      /*final registerData = registerState.getNewExpense;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if(registerData != null ){
+        addExpenseFromMQTT(registerData);
+        print('Se ha añadido un objeto: ${registerData.amountEuro} €, ${registerData.amountKWh} kWh, ${registerData.dateTime.toString()}');
+      } 
+      });*/
+      
+      
+      return Scaffold( //value es toda la informacion que necesitaremos
         //backgroundColor: Colors.grey.shade50,
 
         floatingActionButton: Column(
@@ -334,7 +368,9 @@ class _GraphicsPageState extends State<GraphicsPage> {
             )),*/
           ],
         ),
-      ),
+      );
+    }
+
     );
   }
 }
