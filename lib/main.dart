@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:power_meter/data/expense_data.dart';
-import 'package:power_meter/mqtt/state/mqtt_app_state.dart';
+import 'package:power_meter/mqtt/state/mqtt_power_state.dart';
+import 'package:power_meter/mqtt/state/mqtt_register_state.dart';
 import 'package:power_meter/presentation/screens/graphics_screen.dart';
 import 'package:power_meter/presentation/screens/mqtt_view_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+//import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   // initialize hive
@@ -16,10 +19,22 @@ Future<void> main() async {
 
   runApp(
     /*ChangeNotifierProvider(
-      create: (_) => MQTTAppState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
+      create: (_) => MQTTRegisterState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
       child: const MyApp(),
     ) */
-    const MyApp()
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => MQTTRegisterState(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MQTTPowerState(), 
+        ),
+        
+      ],
+      child: const MyApp(),
+    )
+    //const MyApp()
     );
 }
 
@@ -34,7 +49,6 @@ class _MyAppState extends State<MyApp> {
     
     int _paginaActual = 1; //Widget de la lista que se esta mostrando
 
-    //TODO: Las widgets correspondientes a cada pagina solo deben cargar cuando se este en dichas paginas
     final List<Widget> _paginas = [
         /*Padding( //< Página 0
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
@@ -62,11 +76,12 @@ class _MyAppState extends State<MyApp> {
           builder: (context, child) => const GraphicsPage() // el widget que escucha
         ),
 
-        ChangeNotifierProvider(
-          create: (_) => MQTTAppState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
+        /*ChangeNotifierProvider(
+          create: (_) => MQTTPowerState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
           child: const MQTTView(),
-        ), //< Página 1
-
+        ),*/ //< Página 1
+        const MQTTView(),
+        
         const Center(child: Text('Perfil')) //< Página 2
 
     ];
@@ -75,6 +90,15 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Power Meter',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale('es'),
+        Locale('es')
+      ],
       home: SafeArea(
               child: Scaffold(
                 appBar: AppBar(

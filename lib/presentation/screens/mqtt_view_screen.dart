@@ -1,13 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+//import 'package:network_tools/network_tools.dart';
 import 'package:power_meter/mqtt/mqtt_manager.dart';
 import 'package:power_meter/mqtt/multicast_dns_mqtt.dart';
-import 'package:power_meter/mqtt/state/mqtt_app_state.dart';
+import 'package:power_meter/mqtt/state/mqtt_power_state.dart';
+import 'package:power_meter/mqtt/state/mqtt_register_state.dart';
 import 'package:power_meter/presentation/items/card.dart';
 import 'package:provider/provider.dart';
 import 'package:multicast_dns/multicast_dns.dart';
 
+late String ipMQTTServer;
+late MQTTManager mqttManager;
 class MQTTView extends StatefulWidget{
   const MQTTView({super.key});
 
@@ -21,16 +25,17 @@ class _MQTTViewState extends State<MQTTView>{
   /* Espacio para los TextEditingControllers */
 
   /* Variables de estado y management mqtt */
-  late MQTTAppState currentAppState;
-  late MQTTManager mqttManager;
+  late MQTTPowerState currentAppState;
+  late MQTTRegisterState currentRegisterState;
   late DiscoverServices discover;
-  late String ipMQTTServer;
+  
   bool firstmDNSscan = true;
 
   /* Iniciamos el estado del widget */
   @override
   void initState(){
     super.initState();
+
   }
 
   /* Liberamos recursos utilizados por elobjeto State cuando se elimine del widget tree */
@@ -40,8 +45,11 @@ class _MQTTViewState extends State<MQTTView>{
 
   @override
   Widget build(BuildContext context) {
-    final MQTTAppState appState = Provider.of<MQTTAppState>(context); //Cambios de estado de los que nos informa el provider. (desde notifyListeners)
+    final MQTTPowerState appState = Provider.of<MQTTPowerState>(context); //Cambios de estado de los que nos informa el provider. (desde notifyListeners)
+    // añadir provider of MQTTRegisterState
     currentAppState = appState; // lo registramos
+    final MQTTRegisterState registerState = Provider.of<MQTTRegisterState>(context);
+    currentRegisterState = registerState;
     final Scaffold scaffold = Scaffold(body: _buildColumn());
     return scaffold;
   }
@@ -51,13 +59,13 @@ class _MQTTViewState extends State<MQTTView>{
     return Column( //Columna de widgets de la pantalla de en medio
       children: <Widget>[
         _buildConnectionStateText(),
-        _buildVIRow(currentAppState.getDataJSON),
-        _buildActivePowerRow(currentAppState.getDataJSON),
-        _buildReactivePowerRow(currentAppState.getDataJSON),
-        _buildAparentPowerRow(currentAppState.getDataJSON),
-        _buildPowerFactorRow(currentAppState.getDataJSON),
-        _buildConnectButton(currentAppState.getAppConnectionState),
-        _buildScrollableTextWith(currentAppState.getReceivedText)
+        _buildVIRow(currentAppState.getPowerData),
+        _buildActivePowerRow(currentAppState.getPowerData),
+        _buildReactivePowerRow(currentAppState.getPowerData),
+        _buildAparentPowerRow(currentAppState.getPowerData),
+        _buildPowerFactorRow(currentAppState.getPowerData),
+        _buildConnectButton(currentAppState.getPowerConnectionState),
+        _buildScrollableTextWith(currentAppState.getReceivedText),
       ],
     );
   }
@@ -74,26 +82,15 @@ class _MQTTViewState extends State<MQTTView>{
         return RawDatagramSocket.bind(host, port,
       reuseAddress: true, reusePort: false, ttl: ttl!);
     });  
-    await client.start();
-    await for (final PtrResourceRecord ptr in client
-      .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
-      await for (final SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
-        ResourceRecordQuery.service(ptr.domainName))) {
-      final String bundleId =
-          ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
-      print('MQTT Service instance found at '
-          '${srv.target}:${srv.port} for "$bundleId".');
-          ip = srv.name;
-          print(ip);
-      }
-    }
-
+    
     if (ip != '') {
     mqttManager = MQTTManager(
       host: ip, // Set the host to the discovered service name
-      topic: 'broker/measure',
+      topicMeasure: 'broker/measure',
+      topicRegister: 'broker/register',
       identifier: 'FASTO',
-      state: currentAppState,
+      powerState: currentAppState,
+      registerState: currentRegisterState
     );
 
     mqttManager.initializeMQTTClient();
@@ -122,9 +119,11 @@ class _MQTTViewState extends State<MQTTView>{
     //if (nsdServiceInfo != null) {
       mqttManager = MQTTManager(
         host: ipMQTTServer, // Set the host to the discovered service name
-        topic: 'broker/measure',
+        topicMeasure: 'broker/measure',
+        topicRegister: 'broker/register',
         identifier: 'FASTO',
-        state: currentAppState,
+        powerState: currentAppState,
+        registerState: currentRegisterState,
       );
       mqttManager.initializeMQTTClient();
       mqttManager.connect();
@@ -145,16 +144,16 @@ void _disconnect() {
   
   _buildConnectionStateText() { //Devuelve el widget que indica el estado de conexion
     String connectionState = '';
-    TextStyle textStyle = const TextStyle(color: Colors.red, fontWeight: FontWeight.bold,);;
-    if(currentAppState.getAppConnectionState == MQTTAppConnectionState.connected) {
+    TextStyle textStyle = const TextStyle(color: Colors.red, fontWeight: FontWeight.bold,);
+    if(currentAppState.getPowerConnectionState == MQTTPowerConnectionState.connected) {
       connectionState = 'Conectado';
       textStyle = const TextStyle(color: Colors.green, fontWeight: FontWeight.bold);
     }
-    if(currentAppState.getAppConnectionState == MQTTAppConnectionState.disconnected) {
+    if(currentAppState.getPowerConnectionState == MQTTPowerConnectionState.disconnected) {
       connectionState = 'Desconectado';
       textStyle = const TextStyle(color: Colors.red, fontWeight: FontWeight.bold);
     }
-    if(currentAppState.getAppConnectionState == MQTTAppConnectionState.connecting) {
+    if(currentAppState.getPowerConnectionState == MQTTPowerConnectionState.connecting) {
       connectionState = 'Connectando';
       textStyle = const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold);
     }
@@ -173,7 +172,7 @@ void _disconnect() {
     );
   }
   
-  _buildVIRow(ManageData medida) {
+  _buildVIRow(PowerData medida) {
       return  Row(
             children: [
               Expanded(child: MyCard(magnitude: 'VRMS', value: medida.vrms)),
@@ -183,7 +182,7 @@ void _disconnect() {
           );
   }
   
-  _buildActivePowerRow(ManageData medida) {
+  _buildActivePowerRow(PowerData medida) {
     return  Row(
             children: [
               Expanded(child: MyCard(magnitude: 'Potencia activa', value: medida.potActiva)),
@@ -191,7 +190,7 @@ void _disconnect() {
           );
   }
   
-  _buildReactivePowerRow(ManageData medida) {
+  _buildReactivePowerRow(PowerData medida) {
     return  Row(
             children: [
               Expanded(child: MyCard(magnitude: 'Potencia reactiva', value: medida.potReactiva)),
@@ -199,7 +198,7 @@ void _disconnect() {
           );
   }
   
-  _buildAparentPowerRow(ManageData medida) {
+  _buildAparentPowerRow(PowerData medida) {
     return  Row(
             children: [
               Expanded(child: MyCard(magnitude: 'Potencia aparente', value: medida.potAparente)),
@@ -207,7 +206,7 @@ void _disconnect() {
           );
   }
   
-  _buildPowerFactorRow(ManageData medida) {
+  _buildPowerFactorRow(PowerData medida) {
     return  Row(
             children: [
               Expanded(child: MyCard(magnitude: 'Factor de potencia', value: medida.powerFactor)),
@@ -215,13 +214,13 @@ void _disconnect() {
           );
   }
   
-  _buildConnectButton(MQTTAppConnectionState state) {
-    String textoBoton = state == MQTTAppConnectionState.disconnected 
+  _buildConnectButton(MQTTPowerConnectionState state) {
+    String textoBoton = state == MQTTPowerConnectionState.disconnected 
           ? 'Conectar'
           : 'Desconectar';
     return TextButton(    
       onPressed: () { 
-        state == MQTTAppConnectionState.disconnected 
+        state == MQTTPowerConnectionState.disconnected 
           ? _configureAndConnect()
           : _disconnect();
       },

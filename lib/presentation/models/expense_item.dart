@@ -1,4 +1,9 @@
 
+import 'dart:convert';
+
+ExpenseItem expenseItemFromJson(String str) => ExpenseItem.fromJson(json.decode(str));
+
+String expenseItemToJson(ExpenseItem data) => json.encode(data.toJson());
 
 class ExpenseItem { //ira  enfocado al consumo en €
   final String amountKWh; // nombre del gasto --> innecesario en este caso
@@ -10,5 +15,15 @@ class ExpenseItem { //ira  enfocado al consumo en €
     required this.amountEuro,
     required this.dateTime
   });
+  factory ExpenseItem.fromJson(Map<String, dynamic> json) => ExpenseItem(
+        amountKWh: json["amountKWh"].toString(),
+        amountEuro: json["amountEuro"].toString(),
+        dateTime: DateTime.parse(json["dateTime"]),
+    );
 
+    Map<String, dynamic> toJson() => {
+        "amountKWh": amountKWh,
+        "amountEuro": amountEuro,
+        "dateTime": dateTime.toIso8601String(),
+    };
 }

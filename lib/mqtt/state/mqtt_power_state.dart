@@ -6,11 +6,11 @@ import 'dart:convert';
 //
 //     final welcome = welcomeFromJson(jsonString);
 
-ManageData welcomeFromJson(String str) => ManageData.fromJson(json.decode(str)); //entra string, sale json
+PowerData welcomeFromJson(String str) => PowerData.fromJson(json.decode(str)); //entra string, sale json
 
-String welcomeToJson(ManageData data) => json.encode(data.toJson()); //entra json, sale string
+String welcomeToJson(PowerData data) => json.encode(data.toJson()); //entra json, sale string
 
-class ManageData {
+class PowerData {
     final String timestamp;
     final double vrms;
     final double irms;
@@ -19,7 +19,7 @@ class ManageData {
     final double potAparente;
     final double powerFactor;
 
-    ManageData({
+    PowerData({
         required this.timestamp,
         required this.vrms,
         required this.irms,
@@ -30,7 +30,7 @@ class ManageData {
 
     });
 
-    factory ManageData.fromJson(Map<String, dynamic> json) => ManageData(
+    factory PowerData.fromJson(Map<String, dynamic> json) => PowerData(
         timestamp:    json["timestamp"],
         vrms:         json["Vrms"],
         irms:         json["Irms"], 
@@ -51,7 +51,7 @@ class ManageData {
     };
 }
 
-enum MQTTAppConnectionState { connected, disconnected, connecting }
+enum MQTTPowerConnectionState { connected, disconnected, connecting }
 
 /* ChangeNotifier ya que proporciona una notificación a los listeners cada vez que cambia
 alguna de los campos que lo componen, de esta forma, los listeners podran actualizar el UI
@@ -59,22 +59,21 @@ en funcion de dichos cambios */
 
 
 
-class MQTTAppState with ChangeNotifier{
+class MQTTPowerState with ChangeNotifier{
   
   //Estados que vamos a compartir con el resto de los widget
-  MQTTAppConnectionState _appConnectionState = MQTTAppConnectionState.disconnected;
+  MQTTPowerConnectionState _appConnectionState = MQTTPowerConnectionState.disconnected;
   String _receivedText = ''; // lo que se recibe en el topic
-  String _historyText = ''; // acumulacion de todo lo que hemos recibido o enviado
-  ManageData _dataJSON = ManageData(timestamp: '0', vrms: 0.0, irms: 0.0, potActiva: 0.0, potReactiva: 0.0, potAparente: 0.0, powerFactor: 0.0);
+  PowerData _newPowerData = PowerData(timestamp: '0', vrms: 0.0, irms: 0.0, potActiva: 0.0, potReactiva: 0.0, potAparente: 0.0, powerFactor: 0.0);
   
   //Metodo para modificar el estado de _receivedText y _dataJSON
   void setReceivedText(String text) { //recibe el texto, modifica y actualiza
     _receivedText = text; // string recibido
-    _historyText = '$_historyText\n$_receivedText'; //concatenacion con los anteriores
     try{
-      _dataJSON = welcomeFromJson(_receivedText);
+      _newPowerData = welcomeFromJson(_receivedText);
     }catch(e){
       
+      // ignore: avoid_print
       print('El texto recibido no es un JSON válido: $e');
     }
     
@@ -85,16 +84,15 @@ class MQTTAppState with ChangeNotifier{
 
   //Metodo para modificar el estado de _appConnectionState
   //Param : nuevo estado
-  void setAppConnectionState(MQTTAppConnectionState state) { // setea el estado de conexion y notifica
+  void setAppConnectionState(MQTTPowerConnectionState state) { // setea el estado de conexion y notifica
     _appConnectionState = state; //se cambia el estado del objeto de esta clase
     notifyListeners(); //se notifica a todos los widgets de arriba que esten escuchando
   }
 
   //getters del valor actual de estos estados
   String get getReceivedText => _receivedText;
-  String get getHistoryText => _historyText;
-  MQTTAppConnectionState get getAppConnectionState => _appConnectionState;
-  ManageData get getDataJSON => _dataJSON;
+  MQTTPowerConnectionState get getPowerConnectionState => _appConnectionState;
+  PowerData get getPowerData => _newPowerData;
 }
 
 
