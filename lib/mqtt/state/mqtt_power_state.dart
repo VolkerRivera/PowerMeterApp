@@ -64,17 +64,16 @@ class MQTTPowerState with ChangeNotifier{
   //Estados que vamos a compartir con el resto de los widget
   MQTTPowerConnectionState _appConnectionState = MQTTPowerConnectionState.disconnected;
   String _receivedText = ''; // lo que se recibe en el topic
-  String _historyText = ''; // acumulacion de todo lo que hemos recibido o enviado
   PowerData _newPowerData = PowerData(timestamp: '0', vrms: 0.0, irms: 0.0, potActiva: 0.0, potReactiva: 0.0, potAparente: 0.0, powerFactor: 0.0);
   
   //Metodo para modificar el estado de _receivedText y _dataJSON
   void setReceivedText(String text) { //recibe el texto, modifica y actualiza
     _receivedText = text; // string recibido
-    _historyText = '$_historyText\n$_receivedText'; //concatenacion con los anteriores
     try{
       _newPowerData = welcomeFromJson(_receivedText);
     }catch(e){
       
+      // ignore: avoid_print
       print('El texto recibido no es un JSON válido: $e');
     }
     
@@ -92,7 +91,6 @@ class MQTTPowerState with ChangeNotifier{
 
   //getters del valor actual de estos estados
   String get getReceivedText => _receivedText;
-  String get getHistoryText => _historyText;
   MQTTPowerConnectionState get getPowerConnectionState => _appConnectionState;
   PowerData get getPowerData => _newPowerData;
 }

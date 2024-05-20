@@ -43,12 +43,19 @@ class _GraphicsPageState extends State<GraphicsPage> {
     // Esta función se llamará solo cuando MQTTRegisterState notifique un cambio
     if(mounted){
       final expenseData = Provider.of<ExpenseData>(context, listen: false);
-      final registerData = currentRegisterState.getNewExpense; 
+      //final registerData = currentRegisterState.getNewExpense; 
+      final List<ExpenseItem> newExpenseList = currentRegisterState.getExpenseList;
 
-      if ( registerData != null ) {
-      expenseData.addNewExpense(registerData);
-      //registerState.clearReceivedText();
+      if(newExpenseList.isNotEmpty){
+        for (var expense in newExpenseList) {  // Iteramos sobre la lista
+          expenseData.addNewExpense(expense);  // Añadimos cada gasto
+        }
+        currentRegisterState.clearExpenseList();
       }
+
+      /*if ( registerData != null ) {
+        expenseData.addNewExpense(registerData);
+      }*/
     }
     
   }

@@ -7,13 +7,14 @@ import 'package:power_meter/presentation/screens/graphics_screen.dart';
 import 'package:power_meter/presentation/screens/mqtt_view_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+//import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   // initialize hive
   await Hive.initFlutter();
 
   // open a hive box
-  await Hive.deleteBoxFromDisk('expense_database4');
+  //await Hive.deleteBoxFromDisk('expense_database4');
   await Hive.openBox('expense_database4');
 
   runApp(
@@ -47,7 +48,6 @@ class _MyAppState extends State<MyApp> {
     
     int _paginaActual = 1; //Widget de la lista que se esta mostrando
 
-    //TODO: Las widgets correspondientes a cada pagina solo deben cargar cuando se este en dichas paginas
     final List<Widget> _paginas = [
         /*Padding( //< Página 0
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
         /*ChangeNotifierProvider(
           create: (_) => MQTTPowerState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
           child: const MQTTView(),
-        ), //< Página 1*/
+        ),*/ //< Página 1
         const MQTTView(),
         const Center(child: Text('Perfil')) //< Página 2
 

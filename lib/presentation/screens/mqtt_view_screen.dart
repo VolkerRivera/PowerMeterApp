@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+//import 'package:network_tools/network_tools.dart';
 import 'package:power_meter/mqtt/mqtt_manager.dart';
 import 'package:power_meter/mqtt/multicast_dns_mqtt.dart';
 import 'package:power_meter/mqtt/state/mqtt_power_state.dart';
@@ -33,6 +33,7 @@ class _MQTTViewState extends State<MQTTView>{
   @override
   void initState(){
     super.initState();
+
   }
 
   /* Liberamos recursos utilizados por elobjeto State cuando se elimine del widget tree */
@@ -79,20 +80,7 @@ class _MQTTViewState extends State<MQTTView>{
         return RawDatagramSocket.bind(host, port,
       reuseAddress: true, reusePort: false, ttl: ttl!);
     });  
-    await client.start();
-    await for (final PtrResourceRecord ptr in client
-      .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
-      await for (final SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
-        ResourceRecordQuery.service(ptr.domainName))) {
-      final String bundleId =
-          ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
-      print('MQTT Service instance found at '
-          '${srv.target}:${srv.port} for "$bundleId".');
-          ip = srv.name;
-          print(ip);
-      }
-    }
-
+    
     if (ip != '') {
     mqttManager = MQTTManager(
       host: ip, // Set the host to the discovered service name
