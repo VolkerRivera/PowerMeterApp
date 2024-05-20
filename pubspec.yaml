@@ -53,6 +53,7 @@ dependencies:
     sdk: flutter
   network_tools: ^5.0.2
   path_provider: ^2.1.3
+  nsd: ^3.0.0
 
 dev_dependencies:
   flutter_test:

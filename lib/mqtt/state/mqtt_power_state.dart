@@ -18,6 +18,7 @@ class PowerData {
     final double potReactiva;
     final double potAparente;
     final double powerFactor;
+    final double frecuencia;
 
     PowerData({
         required this.timestamp,
@@ -27,7 +28,7 @@ class PowerData {
         required this.potReactiva,
         required this.potAparente,
         required this.powerFactor,
-
+        required this.frecuencia
     });
 
     factory PowerData.fromJson(Map<String, dynamic> json) => PowerData(
@@ -38,6 +39,7 @@ class PowerData {
         potReactiva:  json["VAR"], 
         potAparente:  json["VA"], 
         powerFactor:  json["PF"],
+        frecuencia:   json["frec"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -48,6 +50,7 @@ class PowerData {
         "VAR"      : potReactiva,
         "VA"       : potAparente,
         "PF"       : powerFactor,
+        "frec"     : frecuencia
     };
 }
 
@@ -64,7 +67,7 @@ class MQTTPowerState with ChangeNotifier{
   //Estados que vamos a compartir con el resto de los widget
   MQTTPowerConnectionState _appConnectionState = MQTTPowerConnectionState.disconnected;
   String _receivedText = ''; // lo que se recibe en el topic
-  PowerData _newPowerData = PowerData(timestamp: '0', vrms: 0.0, irms: 0.0, potActiva: 0.0, potReactiva: 0.0, potAparente: 0.0, powerFactor: 0.0);
+  PowerData _newPowerData = PowerData(timestamp: '0', vrms: 0.0, irms: 0.0, potActiva: 0.0, potReactiva: 0.0, potAparente: 0.0, powerFactor: 0.0, frecuencia: 0.0);
   
   //Metodo para modificar el estado de _receivedText y _dataJSON
   void setReceivedText(String text) { //recibe el texto, modifica y actualiza

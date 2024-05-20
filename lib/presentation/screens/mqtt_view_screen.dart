@@ -1,14 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-//import 'package:network_tools/network_tools.dart';
 import 'package:power_meter/mqtt/mqtt_manager.dart';
 import 'package:power_meter/mqtt/multicast_dns_mqtt.dart';
 import 'package:power_meter/mqtt/state/mqtt_power_state.dart';
 import 'package:power_meter/mqtt/state/mqtt_register_state.dart';
 import 'package:power_meter/presentation/items/card.dart';
 import 'package:provider/provider.dart';
-import 'package:multicast_dns/multicast_dns.dart';
+import 'package:nsd/nsd.dart';
 
 late String ipMQTTServer;
 late MQTTManager mqttManager;
@@ -50,20 +48,23 @@ class _MQTTViewState extends State<MQTTView>{
     currentAppState = appState; // lo registramos
     final MQTTRegisterState registerState = Provider.of<MQTTRegisterState>(context);
     currentRegisterState = registerState;
-    final Scaffold scaffold = Scaffold(body: _buildColumn());
+    final Scaffold scaffold = Scaffold(
+      body: _buildColumn());
     return scaffold;
   }
 
   Widget _buildColumn() {
     
-    return Column( //Columna de widgets de la pantalla de en medio
-      children: <Widget>[
+    return ListView( //Columna de widgets de la pantalla de en medio
+      children: [
+        const SizedBox(height: 20,),
         _buildConnectionStateText(),
         _buildVIRow(currentAppState.getPowerData),
         _buildActivePowerRow(currentAppState.getPowerData),
         _buildReactivePowerRow(currentAppState.getPowerData),
         _buildAparentPowerRow(currentAppState.getPowerData),
         _buildPowerFactorRow(currentAppState.getPowerData),
+        _buildFrecuencyRow(currentAppState.getPowerData),
         _buildConnectButton(currentAppState.getPowerConnectionState),
         _buildScrollableTextWith(currentAppState.getReceivedText),
       ],
@@ -73,35 +74,29 @@ class _MQTTViewState extends State<MQTTView>{
  void _configureAndConnect() async {
   
   if(Platform.isIOS){
-    /* MULTICAST_DNS LIBRARY */
-    const String name = '_mqtt._tcp.local';
     String ip = '';
-    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
-      (dynamic host, int port,
-        {bool? reuseAddress, bool? reusePort, int? ttl}) {
-        return RawDatagramSocket.bind(host, port,
-      reuseAddress: true, reusePort: false, ttl: ttl!);
-    });  
-    
-    if (ip != '') {
-    mqttManager = MQTTManager(
-      host: ip, // Set the host to the discovered service name
-      topicMeasure: 'broker/measure',
-      topicRegister: 'broker/register',
-      identifier: 'FASTO',
-      powerState: currentAppState,
-      registerState: currentRegisterState
-    );
+    final discoveryIOS = await startDiscovery('_mqtt._tcp', autoResolve: true, ipLookupType: IpLookupType.v4);
+    discoveryIOS.addServiceListener((service, status) {
+      if(status == ServiceStatus.found){
+        InternetAddress newAdress =  service.addresses!.first;
+        ip = newAdress.address;
+        mqttManager = MQTTManager(
+          host: ip, // Set the host to the discovered service name
+          topicMeasure: 'broker/measure',
+          topicRegister: 'broker/register',
+          identifier: 'FASTO',
+          powerState: currentAppState,
+          registerState: currentRegisterState
+        );
 
-    mqttManager.initializeMQTTClient();
-    mqttManager.connect();
-     //Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
-    } else {
-      print('No se pudo descubrir el servicio mDNS.');
-    }
-  
-    // Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
-    client.stop();
+        mqttManager.initializeMQTTClient();
+        mqttManager.connect();
+      }
+    });
+    
+    
+    
+    
   }
   
   if(Platform.isAndroid){
@@ -210,6 +205,14 @@ void _disconnect() {
     return  Row(
             children: [
               Expanded(child: MyCard(magnitude: 'Factor de potencia', value: medida.powerFactor)),
+            ],
+          );
+  }
+
+  _buildFrecuencyRow(PowerData medida) {
+    return  Row(
+            children: [
+              Expanded(child: MyCard(magnitude: 'Frecuencia', value: medida.frecuencia)),
             ],
           );
   }

@@ -273,7 +273,7 @@ class _GraphicsPageState extends State<GraphicsPage> {
       return Scaffold( //value es toda la informacion que necesitaremos
         //backgroundColor: Colors.grey.shade50,
 
-        floatingActionButton: Column(
+        /*floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             FloatingActionButton(
@@ -292,12 +292,26 @@ class _GraphicsPageState extends State<GraphicsPage> {
               child: const Icon(Icons.list),
             ),
           ],
+        ),*/
+
+        appBar: AppBar(
+          actions: [
+            
+            MaterialButton(onPressed: (){
+              if(currentRegisterState.getAppConnectionState == MQTTRegisterConnectionState.connected){
+                  mqttManager.publish('updateInfo');
+                }
+            }, child: const Icon(Icons.update),),
+            const Spacer(), // Empuja el segundo botón al extremo derecho
+            MaterialButton(onPressed: configCharts, child: const Icon(Icons.currency_exchange),),
+            
+          ],
         ),
 
         body: ListView(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 0.0),
+              padding: const EdgeInsets.only(top: 10.0),
               child: MaterialButton(  
                 onPressed: () {
                   showDatePicker(

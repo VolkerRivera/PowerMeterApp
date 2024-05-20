@@ -18,10 +18,6 @@ Future<void> main() async {
   await Hive.openBox('expense_database4');
 
   runApp(
-    /*ChangeNotifierProvider(
-      create: (_) => MQTTRegisterState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
-      child: const MyApp(),
-    ) */
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -34,7 +30,6 @@ Future<void> main() async {
       ],
       child: const MyApp(),
     )
-    //const MyApp()
     );
 }
 
@@ -101,10 +96,10 @@ class _MyAppState extends State<MyApp> {
       ],
       home: SafeArea(
               child: Scaffold(
-                appBar: AppBar(
+                /*appBar: AppBar(
                   centerTitle: true,
                   title: const Text('ADE9153A'),
-                ),
+                ),*/
                 body: _paginas[_paginaActual],
                 bottomNavigationBar:  BottomNavigationBar( //Gestiona toda la barra de navegación
                   currentIndex: _paginaActual, //indica la página actual

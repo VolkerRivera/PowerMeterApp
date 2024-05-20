@@ -53,6 +53,9 @@ String valueToRepresent (String magnitude, double value){
     case 'Factor de potencia':
       valueToRepresent = '$value';
       break;  
+    case 'Frecuencia':
+      valueToRepresent = '$value Hz';
+      break;  
   }
 
   return valueToRepresent;
