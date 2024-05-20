@@ -83,7 +83,7 @@ class MQTTManager {
   void publish(String message) {
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder(); //instancia para construir la carga util del mensaje
     builder.addString(message); //construiccion del payload con el string
-    _client!.publishMessage(_topicMeasure, MqttQos.atMostOnce, builder.payload!); //publucacion en el topic
+    //_client!.publishMessage(_topicMeasure, MqttQos.atMostOnce, builder.payload!); //publucacion en el topic
     _client!.publishMessage(_topicRegister, MqttQos.atMostOnce, builder.payload!);
     //MqttQos.exactlyOnce garantiza que el mensaje se entregara una sola vez
   }

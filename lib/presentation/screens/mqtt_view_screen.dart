@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 //import 'package:network_tools/network_tools.dart';
 import 'package:power_meter/mqtt/mqtt_manager.dart';
@@ -9,6 +10,8 @@ import 'package:power_meter/presentation/items/card.dart';
 import 'package:provider/provider.dart';
 import 'package:multicast_dns/multicast_dns.dart';
 
+late String ipMQTTServer;
+late MQTTManager mqttManager;
 class MQTTView extends StatefulWidget{
   const MQTTView({super.key});
 
@@ -24,9 +27,8 @@ class _MQTTViewState extends State<MQTTView>{
   /* Variables de estado y management mqtt */
   late MQTTPowerState currentAppState;
   late MQTTRegisterState currentRegisterState;
-  late MQTTManager mqttManager;
   late DiscoverServices discover;
-  late String ipMQTTServer;
+  
   bool firstmDNSscan = true;
 
   /* Iniciamos el estado del widget */
@@ -63,7 +65,7 @@ class _MQTTViewState extends State<MQTTView>{
         _buildAparentPowerRow(currentAppState.getPowerData),
         _buildPowerFactorRow(currentAppState.getPowerData),
         _buildConnectButton(currentAppState.getPowerConnectionState),
-        _buildScrollableTextWith(currentAppState.getReceivedText)
+        _buildScrollableTextWith(currentAppState.getReceivedText),
       ],
     );
   }

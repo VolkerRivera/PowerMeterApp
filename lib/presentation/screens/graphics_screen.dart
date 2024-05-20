@@ -4,6 +4,7 @@ import 'package:power_meter/datetime/date_time_helper.dart';
 import 'package:power_meter/mqtt/state/mqtt_register_state.dart';
 import 'package:power_meter/presentation/items/expense_summary.dart';
 import 'package:power_meter/presentation/models/expense_item.dart';
+import 'package:power_meter/presentation/screens/mqtt_view_screen.dart';
 import 'package:provider/provider.dart';
 
 class GraphicsPage extends StatefulWidget {
@@ -276,8 +277,13 @@ class _GraphicsPageState extends State<GraphicsPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             FloatingActionButton(
-              onPressed: addNewExpense, //< Si se pulsa el boton flotante del scaffold se abre el cuadro de dialogo para añadir gastos
-              child: const Icon(Icons.add),
+              onPressed: (){
+                if(currentRegisterState.getAppConnectionState == MQTTRegisterConnectionState.connected){
+                  mqttManager.publish('updateInfo');
+                }
+                
+              }, //< Si se pulsa el boton flotante del scaffold se abre el cuadro de dialogo para añadir gastos
+              child: const Icon(Icons.update),
             ),
             const SizedBox(height: 10,),
             FloatingActionButton(

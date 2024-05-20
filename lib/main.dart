@@ -14,7 +14,7 @@ Future<void> main() async {
   await Hive.initFlutter();
 
   // open a hive box
-  //await Hive.deleteBoxFromDisk('expense_database4');
+  await Hive.deleteBoxFromDisk('expense_database4');
   await Hive.openBox('expense_database4');
 
   runApp(
@@ -30,6 +30,7 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (_) => MQTTPowerState(), 
         ),
+        
       ],
       child: const MyApp(),
     )
@@ -80,6 +81,7 @@ class _MyAppState extends State<MyApp> {
           child: const MQTTView(),
         ),*/ //< Página 1
         const MQTTView(),
+        
         const Center(child: Text('Perfil')) //< Página 2
 
     ];
