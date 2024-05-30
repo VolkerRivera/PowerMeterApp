@@ -73,7 +73,7 @@ class _MQTTViewState extends State<MQTTView>{
 
  void _configureAndConnect() async {
   
-  if(Platform.isIOS){
+  //if(Platform.isIOS){
     String ip = '';
     final discoveryIOS = await startDiscovery('_mqtt._tcp', autoResolve: true, ipLookupType: IpLookupType.v4);
     discoveryIOS.addServiceListener((service, status) {
@@ -97,9 +97,9 @@ class _MQTTViewState extends State<MQTTView>{
     
     
     
-  }
+  //}
   
-  if(Platform.isAndroid){
+  /*if(Platform.isAndroid){
     if(firstmDNSscan){//la primera vez que se escanea se hace el mDNS scan, el resto no porque ya se tiene la IP
       discover = DiscoverServices();
       await discover.init(); // Espera a que se complete el descubrimiento.
@@ -130,7 +130,7 @@ class _MQTTViewState extends State<MQTTView>{
   
     // Detiene el descubrimiento de servicios una vez que se haya conectado o si no se encontró el servicio.
     //discover.stopDiscoveryButton();
-  }
+  }*/
 }
 
 void _disconnect() {
