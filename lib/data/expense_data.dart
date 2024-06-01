@@ -31,8 +31,8 @@ class ExpenseData extends ChangeNotifier{
   }
 
   // eliminar gasto
-  void deleteExpense(ExpenseItem expense) {
-    overallExpenseList.remove(expense);
+  void deleteExpenses() {
+    overallExpenseList = []; // importante vaciar la lista para que no se sobreescriba toda la informacion
     notifyListeners(); // para que todos los listeners sean avisados
     database.saveData(overallExpenseList); //se actualiza la lista guardada 
   }
@@ -160,6 +160,58 @@ class ExpenseData extends ChangeNotifier{
       }
     }
     return dailyExpenseEuroSummary;
+  }
+
+  Map<String, double> calculateHourlyExpenseSummaryEuros(){
+    //inicializammos el mapa
+    Map<String, double> hourlyExpenseEuroSummary = {
+      // date (yyyymmddhh : totalAmountForEuro)
+    };
+
+    //iteramos el mapa de todos los gastos para acumular por hora de dia
+    for (var expense in overallExpenseList){
+      // suma todos los que coincidan en fecha
+      // formamos la clave
+      String date = convertDateTimeToHourString(expense.dateTime); // Para que irtere bien esta fecha tiene que tener el formato del video
+      // formamos el valor
+      double amount = double.parse(expense.amountEuro);
+      
+      if(hourlyExpenseEuroSummary.containsKey(date)){ //si lo tiene suma nuevo valor a la key
+        double currentAmount = hourlyExpenseEuroSummary[date]!;
+        currentAmount += amount;
+        hourlyExpenseEuroSummary[date] = currentAmount;
+
+      }else{//si no lo tiene sañade nueva key entry
+        hourlyExpenseEuroSummary.addAll({date: amount});
+      }
+    }
+    return hourlyExpenseEuroSummary;
+  }
+
+  Map<String, double> calculateHourlyExpenseSummarykWh(){
+    //inicializammos el mapa
+    Map<String, double> hourlyExpensekWhSummary = {
+      // date (yyyymmddhh : totalAmountForHour)
+    };
+
+    //iteramos el mapa de todos los gastos para acumular por hora de dia
+    for (var expense in overallExpenseList){
+      // suma todos los que coincidan en fecha
+      // formamos la clave
+      String date = convertDateTimeToHourString(expense.dateTime); // Para que irtere bien esta fecha tiene que tener el formato del video
+      // formamos el valor
+      double amount = double.parse(expense.amountKWh);
+      
+      if(hourlyExpensekWhSummary.containsKey(date)){ //si lo tiene suma nuevo valor a la key
+        double currentAmount = hourlyExpensekWhSummary[date]!;
+        currentAmount += amount;
+        hourlyExpensekWhSummary[date] = currentAmount;
+
+      }else{//si no lo tiene sañade nueva key entry
+        hourlyExpensekWhSummary.addAll({date: amount});
+      }
+    }
+    return hourlyExpensekWhSummary;
   }
 
   Map<String, double> calculateDailyExpenseSummarykWh() {

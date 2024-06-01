@@ -192,8 +192,8 @@ class _GraphicsPageState extends State<GraphicsPage> {
   }
 
   // delete expense
-  void deleteExpense(ExpenseItem expense){
-    Provider.of<ExpenseData>(context, listen: false).deleteExpense(expense);
+  void deleteExpense(){
+    Provider.of<ExpenseData>(context, listen: false).deleteExpenses();
   }
 
   // cancel
@@ -299,8 +299,11 @@ class _GraphicsPageState extends State<GraphicsPage> {
             
             MaterialButton(onPressed: (){
               if(currentRegisterState.getAppConnectionState == MQTTRegisterConnectionState.connected){
-                  mqttManager.publish('updateInfo');
-                }
+                // borrar lista Y MEMORIA
+                deleteExpense();
+                // pedir datos
+                mqttManager.publish('updateInfo');
+              }
             }, child: const Icon(Icons.update),),
             const Spacer(), // Empuja el segundo botón al extremo derecho
             MaterialButton(onPressed: configCharts, child: const Icon(Icons.currency_exchange),),
@@ -310,7 +313,43 @@ class _GraphicsPageState extends State<GraphicsPage> {
 
         body: ListView(
           children: [
+
             Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: MaterialButton(  
+                onPressed: () {
+                  showDatePicker(
+                    context: context, 
+                    locale: const Locale('es', 'ES'),
+                    currentDate: _dateTimeWeek,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2023), 
+                    lastDate: DateTime(2025)
+                    ).then((value) {
+                     setState(() {
+                      _dateTimeWeek = value ?? _dateTimeWeek;
+                    });
+                  });   
+                }, //abre el caleadario
+                child: Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20, right: 5),
+                      child: Icon(Icons.calendar_month),
+                    ),
+                    Text( //rango de fecha
+                      '${_dateTimeWeek.day} ${nombreMes(_dateTimeWeek)} ${_dateTimeWeek.year}',
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+
+            ExpenseSummaryDay(dayToConsult: _dateTimeWeek, euro: euro),
+
+            /*Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: MaterialButton(  
                 onPressed: () {
@@ -341,12 +380,12 @@ class _GraphicsPageState extends State<GraphicsPage> {
                   ],
                 ),
               ),
-            ),
+            ),*/
 
             // wekkly summary -> grafico de gastos
             ExpenseSummaryWeek(startOfWeek: value.startOfWeekDate(_dateTimeWeek), euro: euro), // el metodo startOfWeekDate() proviene de ExpenseData
-
-            Padding(
+            
+            /*Padding(
               padding: const EdgeInsets.only(top: 30.0),
               child: MaterialButton(  
                 onPressed: () {
@@ -376,11 +415,11 @@ class _GraphicsPageState extends State<GraphicsPage> {
                   ],
                 ),
               ),
-            ),
+            ),*/
             //ExpenseSummaryWeek(startOfWeek: value.startOfWeekDate(), euro: false),
             Padding(
               padding: const EdgeInsets.only(bottom: 30.0),
-              child: ExpenseSummaryMonth(startOfMonth: goToFirstDay(_dateTimeMonth), euro: euro),
+              child: ExpenseSummaryMonth(startOfMonth: goToFirstDay(_dateTimeWeek), euro: euro),
             )
             
             //expense list -> lista de gastos

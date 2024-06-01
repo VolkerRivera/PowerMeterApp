@@ -37,6 +37,24 @@ class BarDataWeek{
 
 }
 
+class BarDataDay{
+  final List<double> values;
+
+  BarDataDay({
+    required this.values
+  });
+
+  List<IndividualBar> barData = [];
+
+  // lista de 24 doubles -> lista de 24 individual bars
+  void initializaBarData(){
+    for(int i = 0; i < 24; i++){
+      IndividualBar newIndividualBar = IndividualBar(x: i, y: values.elementAt(i));
+      barData.add(newIndividualBar);
+    }
+  }
+}
+
 class BarDataMonth{
   final int numDias;
   final List<double> values;
