@@ -38,6 +38,35 @@ String convertDateTimeToMonthString (DateTime dateTime){ // en nuestro caso le t
   return yyyymm; 
 }
 
+//convert DateTime object to String yyyymmddhh
+String convertDateTimeToHourString (DateTime dateTime){
+  // yaer in the format -> yyyy
+  String year = dateTime.year.toString();
+
+  // month in the format -> mm
+  String month = dateTime.month.toString();
+  if (month.length == 1){
+    month = '0$month';
+  }
+
+  // day in the format -> dd
+  String day = dateTime.day.toString();
+  if (day.length == 1){
+    day = '0$day';
+  }
+
+  //hour of that timestamp
+  String hour = dateTime.hour.toString();
+  if (hour.length == 1){
+    hour = '0$hour';
+  }
+
+  // final format yyyymmddhh
+  String yyyymmddhh = year + month + day + hour;
+
+  return yyyymmddhh;
+}
+
 //convert month from number to name 
 String nombreMes(DateTime mes){
   String mesString;

@@ -270,11 +270,13 @@ class MyBarGraphMonth extends StatelessWidget {
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
                     child: Transform(
-                    origin: const Offset(20, 10),
-                    //origin: Offset(20, 20),
-                    transform: Matrix4.identity()..rotateZ(0.8),
-                    alignment: AlignmentDirectional.bottomStart,
-                    child: text));
+                      origin: const Offset(20, 10),
+                      //origin: Offset(20, 20),
+                      transform: Matrix4.identity()..rotateZ(0.8),
+                      alignment: AlignmentDirectional.bottomStart,
+                      child: text
+                    )
+                  );
                 } ,
                 reservedSize: 30
               ),
@@ -297,6 +299,113 @@ class MyBarGraphMonth extends StatelessWidget {
             .toList()
         )
         ),
+    );
+  }
+}
+
+class MyBarGraphDay extends StatelessWidget {
+  final double? maxY;
+  final int numHoras = 24;
+  final List<double> values;
+  final DateTime dayToConsult;
+
+  const MyBarGraphDay({
+    super.key,
+    required this.maxY,
+    required this.values,
+    required this.dayToConsult
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // es dummie, solo le paso valores, donde identifico valores de que dia es en clase MyBarGraphDay
+    BarDataDay myBarData = BarDataDay(values: values);
+    myBarData.initializaBarData();
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: BarChart(BarChartData(
+        maxY: maxY,
+        minY: 0,
+        barGroups: myBarData.barData
+        .map((data) => BarChartGroupData(
+          x: data.x,
+          barRods: [
+            BarChartRodData(
+              toY: data.y,
+              color: const Color.fromARGB(255, 130, 108, 255),
+              borderRadius: BorderRadius.circular(2),
+              width: 15.0
+            )
+          ]
+          ))
+          .toList(),
+        gridData: const FlGridData(
+            show: true,
+            drawHorizontalLine: true,
+            drawVerticalLine: false),
+          borderData: FlBorderData(show: true),
+          titlesData: FlTitlesData(
+            show: true,
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false, // Oculta el eje derecho
+              ),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false, // Oculta el eje derecho
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+                getTitlesWidget: (value, meta) {
+                  const style = TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  );
+                  Widget text = const Text('data', style: style,); 
+                  for(int i = 0; i <= value.toInt(); i++){
+                    text = Text(myBarData.barData.elementAt(i).x.toString(), style: style);
+                  }
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Transform(
+                      origin: const Offset(10, -20),
+                      //origin: Offset(20, 20),
+                      transform: Matrix4.identity()..rotateZ(0),
+                      alignment: AlignmentDirectional.bottomStart,
+                      child: text
+                      ));
+                },
+                reservedSize: 30
+              )
+            )
+          ),
+        barTouchData: BarTouchData(
+          touchCallback: (FlTouchEvent event, barTouchResponse) {
+              if (event.isInterestedForInteractions && barTouchResponse != null) {
+                final spot = barTouchResponse.spot;
+                if (spot != null) {
+                  // Handle the touch event here if needed
+                }
+              }
+            },
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              int startHour = group.x;
+              int endHour = startHour + 1 == 24 ? 0 : startHour + 1;
+              return BarTooltipItem(
+                'Hora: $startHour:00 - $endHour:00\nConsumo: ${rod.toY}',
+                const TextStyle(color: Colors.white),
+                );
+            },
+          ),
+        ),
+      )
+      )
     );
   }
 }

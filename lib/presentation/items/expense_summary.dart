@@ -134,7 +134,7 @@ class ExpenseSummaryWeek extends StatelessWidget {
                       TextSpan(
                         children: [
                           const TextSpan(
-                            text: 'Total: ',
+                            text: 'Total semana: ',
                             style: TextStyle(
                               fontWeight: FontWeight.bold, // Pone el texto en negrita
                               color: Colors.black, // Color del texto
@@ -233,9 +233,13 @@ class ExpenseSummaryMonth extends StatelessWidget {
   //calculate total amount this month
   double calculateMonthMax(ExpenseData value){
     double? max = 100;
+    double consumo = 0;
     int numDias = numDiasThisMonth();
-    //DateTime startThisMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
+    int diaDelMes = startOfMonth.day; 
+    int diaDeLaSemana = startOfMonth.weekday;  
 
+    //DateTime startThisMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
+    List<double> consumoSemana = [];
     if(euro){
       // generamos la lista en base al numero de dias
       List<double> values = List<double>.generate(
@@ -243,11 +247,22 @@ class ExpenseSummaryMonth extends StatelessWidget {
         (int index) =>  value.calculateDailyExpenseSummaryEuros()[convertDateTimeToString(startOfMonth.add(Duration(days: index)))] ?? 0, 
         growable: false);
       
+      while(diaDelMes <= numDias){
+        consumo = consumo + values.elementAt(diaDelMes - 1);
+        if(diaDeLaSemana == 7 || diaDelMes == numDias){
+          consumoSemana.add(consumo);
+          consumo = 0;
+        }
+        diaDelMes++;
+        diaDeLaSemana++;
+        if(diaDeLaSemana==8) diaDeLaSemana = 1;
+      }
+
       //ordenamos valores de menos a mayor
-      values.sort();
+      consumoSemana.sort();
 
       // cogemos el mayor de la lista, el cual se encuentra al final
-      max = values.last * 1.1;
+      max = consumoSemana.last * 1.1;
       
     }else{
       // generamos la lista en base al numero de dias
@@ -257,17 +272,27 @@ class ExpenseSummaryMonth extends StatelessWidget {
         growable: false);
 
       //ordenamos valores de menos a mayor
-      values.sort();
+      while(diaDelMes <= numDias){
+        consumo = consumo + values.elementAt(diaDelMes - 1);
+        if(diaDeLaSemana == 7 || diaDelMes == numDias){
+          consumoSemana.add(consumo);
+          consumo = 0;
+        }
+        diaDelMes++;
+        diaDeLaSemana++;
+        if(diaDeLaSemana==8) diaDeLaSemana = 1;
+      }
+      consumoSemana.sort();
 
       // cogemos el mayor de la lista, el cual se encuentra al final
-      max = values.last * 1.1;
+      max = consumoSemana.last * 1.1;
       
     }
     return max == 0 ? 100 : max;
   }
 
   // list of expenses in a month €
-  List<double> valuesEuroMonth(ExpenseData value,){
+  List<double> valuesEuroMonth(ExpenseData value){
     int numDias = numDiasThisMonth();
     //DateTime startThisMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
     // generamos la lista en base al numero de dias
@@ -278,7 +303,6 @@ class ExpenseSummaryMonth extends StatelessWidget {
     
     return values;
   }
-
   // list of expenses in a month kWh
   List<double> valueskWhMonth(ExpenseData value){
     int numDias = numDiasThisMonth();
@@ -310,7 +334,7 @@ class ExpenseSummaryMonth extends StatelessWidget {
                       TextSpan( // Texto plano
                         children: [
                           const TextSpan(
-                            text: 'Total: ',
+                            text: 'Total mes: ',
                             style: TextStyle(
                               fontWeight: FontWeight.bold, // Pone el texto en negrita
                               color: Colors.black, // Color del texto
@@ -328,16 +352,168 @@ class ExpenseSummaryMonth extends StatelessWidget {
                 ],
               ),
             ),
-            ),
+          ),
           SizedBox( //necesario entender este percal
             height: 275,
             child: MyBarGraphMonth( // grafico de barras mes
               maxY: calculateMonthMax(value), //value -> ExpenseData 
               numDias: numDiasThisMonth(), 
-              values: euro ? valuesEuroMonth(value) : valueskWhMonth(value),
+              values: euro ? valuesEuroMonth(value) : valueskWhMonth(value), // lista con Euro o kWh por cada dia del mes
               startOfMonth: startOfMonth,
               )),
         ],
       ));
+  }
+}
+
+class ExpenseSummaryDay extends StatelessWidget {
+  final DateTime dayToConsult;
+  final bool euro;
+  const ExpenseSummaryDay({
+    super.key,
+    required this.dayToConsult,
+    required this.euro});
+
+  double calculateMaxThisDay(ExpenseData value){
+    double? max = 100;
+    DateTime initDayToConsult = DateTime(
+      dayToConsult.year, 
+      dayToConsult.month,
+      dayToConsult.day,
+      0 // hora
+    );
+
+    if(euro){
+      List<double>values = List<double>.generate(
+      24,
+      (int index) => value.calculateHourlyExpenseSummaryEuros()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
+      growable: false
+      );
+      values.sort();
+      max = values.last * 1.1;
+
+    }else{
+      List<double>values = List<double>.generate(
+      24,
+      (int index) => value.calculateHourlyExpenseSummarykWh()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
+      growable: false
+      );
+      values.sort();
+      max = values.last * 1.1;
+    }
+    return max == 0 ? 100 : max;
+  }
+
+  String calculateDayTotal(ExpenseData value){
+    double total = 0;
+    DateTime initDayToConsult = DateTime(
+      dayToConsult.year, 
+      dayToConsult.month,
+      dayToConsult.day,
+      0 // hora
+    );
+
+    if(euro){
+      List<double>values = List<double>.generate(
+      24,
+      (int index) => value.calculateHourlyExpenseSummaryEuros()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
+      growable: false
+      );
+
+      for(int i = 0; i<24; i++){
+        total += values[i];
+      }
+    }else{
+      List<double>values = List<double>.generate(
+      24,
+      (int index) => value.calculateHourlyExpenseSummarykWh()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
+      growable: false
+      );
+      for(int i = 0; i<24; i++){
+        total += values[i];
+      }
+    }
+
+    return total.toStringAsFixed(2);
+  }
+
+  List<double> valuesEuroDay(ExpenseData value){
+    DateTime initDayToConsult = DateTime(
+      dayToConsult.year, 
+      dayToConsult.month,
+      dayToConsult.day,
+      0 // hora
+      );
+
+    List<double>values = List<double>.generate(
+      24,
+      (int index) => value.calculateHourlyExpenseSummaryEuros()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
+      growable: false
+    );
+    return values;
+  }
+
+  List<double> valueskWhDay(ExpenseData value){
+    DateTime initDayToConsult = DateTime(
+      dayToConsult.year, 
+      dayToConsult.month,
+      dayToConsult.day,
+      0 // hora
+      );
+
+    List<double>values = List<double>.generate(
+      24,
+      (int index) => value.calculateHourlyExpenseSummarykWh()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
+      growable: false
+    );
+    return values;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Consumer<ExpenseData>(
+      builder: (context, value, child) => Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 25.0),
+              child: Row(
+                children: [
+                  RichText(
+                    text: 
+                      TextSpan( // Texto plano
+                        children: [
+                          const TextSpan(
+                            text: 'Total día: ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold, // Pone el texto en negrita
+                              color: Colors.black, // Color del texto
+                            ),
+                          ),
+                          TextSpan( // consumo.string
+                            text: '${calculateDayTotal(value)} ${euro ? '€' : 'kWh'}',
+                            style: const TextStyle(
+                            color: Colors.black, // Color del texto
+                            ),
+                          ),
+                        ],
+                      ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 275,
+            child: MyBarGraphDay(
+              maxY: calculateMaxThisDay(value), 
+              values: euro ? valuesEuroDay(value) : valueskWhDay(value),
+              dayToConsult: dayToConsult),
+          )
+        ],
+      )
+    );
   }
 }
