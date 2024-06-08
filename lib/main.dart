@@ -12,7 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 Future<void> main() async {
   // initialize hive
   await Hive.initFlutter();
-
+  //await Hive.deleteBoxFromDisk('expense_database4');
   // open a hive box
   //await Hive.deleteBoxFromDisk('expense_database4');
   await Hive.openBox('expense_database4');
@@ -45,39 +45,11 @@ class _MyAppState extends State<MyApp> {
     int _paginaActual = 1; //Widget de la lista que se esta mostrando
 
     final List<Widget> _paginas = [
-        /*Padding( //< Página 0
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
-          child: Column(
-                  children: [
-                  LineChartWidget(energiaTiempo), //< Grafico de lineas
-                  const SizedBox(height: 30,),
-                  BarChartWidget(costoTiempo), //< Grafico de barras
-                  const SizedBox(height: 20,),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: FloatingActionButton(  //< Boton que ajusta el periodo de medida
-                      child: const Icon(Icons.calendar_month_outlined),
-                      onPressed:() {
-                      
-                    },),
-                  ),
-                  const SizedBox(height: 30,),
-                  ],
-          ),
-        ),*/
-
         ChangeNotifierProvider(
           create: (context) => ExpenseData(), // los estados que si cambian notifican al que escucha
           builder: (context, child) => const GraphicsPage() // el widget que escucha
         ),
-
-        /*ChangeNotifierProvider(
-          create: (_) => MQTTPowerState(), // Para que este estado sea global, asi al cambiar entre pestañas no se hace dispose() y se mantiene la conexión en segundo plano y se evitan bugs
-          child: const MQTTView(),
-        ),*/ //< Página 1
         const MQTTView(),
-        
-        const Center(child: Text('Perfil')) //< Página 2
 
     ];
 
@@ -85,6 +57,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Power Meter',
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -96,10 +69,6 @@ class _MyAppState extends State<MyApp> {
       ],
       home: SafeArea(
               child: Scaffold(
-                /*appBar: AppBar(
-                  centerTitle: true,
-                  title: const Text('ADE9153A'),
-                ),*/
                 body: _paginas[_paginaActual],
                 bottomNavigationBar:  BottomNavigationBar( //Gestiona toda la barra de navegación
                   currentIndex: _paginaActual, //indica la página actual

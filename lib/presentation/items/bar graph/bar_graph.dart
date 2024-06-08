@@ -38,7 +38,7 @@ class MyBarGraphWeek extends StatelessWidget {
     myBarData.initializeBarData();
 
     return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
+      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
       child: BarChart(
         BarChartData(
           //config eje y
@@ -58,6 +58,11 @@ class MyBarGraphWeek extends StatelessWidget {
 
           titlesData: const FlTitlesData(
             show: true,
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false
+              )
+            ),
             rightTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: false, // Oculta el eje derecho
@@ -224,7 +229,7 @@ class MyBarGraphMonth extends StatelessWidget {
         ),
     );*/
     return Padding(
-      padding: const EdgeInsets.only(right: 20.0,),
+      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
       child: BarChart(
         BarChartData(
           //config eje y
@@ -323,7 +328,7 @@ class MyBarGraphDay extends StatelessWidget {
     myBarData.initializaBarData();
 
     return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
+      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
       child: BarChart(BarChartData(
         maxY: maxY,
         minY: 0,
@@ -347,6 +352,11 @@ class MyBarGraphDay extends StatelessWidget {
           borderData: FlBorderData(show: true),
           titlesData: FlTitlesData(
             show: true,
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false
+              )
+            ),
             rightTitles: const AxisTitles(
               sideTitles: SideTitles(
                 showTitles: false, // Oculta el eje derecho
@@ -359,12 +369,12 @@ class MyBarGraphDay extends StatelessWidget {
             ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
-                showTitles: false,
+                showTitles: true,
                 getTitlesWidget: (value, meta) {
                   const style = TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 10,
                   );
                   Widget text = const Text('data', style: style,); 
                   for(int i = 0; i <= value.toInt(); i++){

@@ -226,6 +226,7 @@ class ExpenseSummaryMonth extends StatelessWidget {
       for (int i = 0; i < values.length; i++){
           total += values[i];
         }
+      total = total;
     }
     return total.toStringAsFixed(2);
   }
@@ -395,7 +396,7 @@ class ExpenseSummaryDay extends StatelessWidget {
     }else{
       List<double>values = List<double>.generate(
       24,
-      (int index) => value.calculateHourlyExpenseSummarykWh()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
+      (int index) => value.calculateHourlyExpenseSummaryWh()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
       growable: false
       );
       values.sort();
@@ -426,7 +427,7 @@ class ExpenseSummaryDay extends StatelessWidget {
     }else{
       List<double>values = List<double>.generate(
       24,
-      (int index) => value.calculateHourlyExpenseSummarykWh()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
+      (int index) => value.calculateHourlyExpenseSummaryWh()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
       growable: false
       );
       for(int i = 0; i<24; i++){
@@ -463,7 +464,7 @@ class ExpenseSummaryDay extends StatelessWidget {
 
     List<double>values = List<double>.generate(
       24,
-      (int index) => value.calculateHourlyExpenseSummarykWh()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
+      (int index) => value.calculateHourlyExpenseSummaryWh()[convertDateTimeToHourString(initDayToConsult.add(Duration(hours: index)))] ?? 0,
       growable: false
     );
     return values;
@@ -493,7 +494,7 @@ class ExpenseSummaryDay extends StatelessWidget {
                             ),
                           ),
                           TextSpan( // consumo.string
-                            text: '${calculateDayTotal(value)} ${euro ? '€' : 'kWh'}',
+                            text: '${calculateDayTotal(value)} ${euro ? '€' : 'Wh'}',
                             style: const TextStyle(
                             color: Colors.black, // Color del texto
                             ),

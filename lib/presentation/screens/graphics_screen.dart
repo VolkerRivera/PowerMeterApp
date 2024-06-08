@@ -36,7 +36,6 @@ class _GraphicsPageState extends State<GraphicsPage> {
 
   // day from calendar
     DateTime _dateTimeWeek = DateTime.now();
-    DateTime _dateTimeMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
 
   // add data automatically
 
@@ -54,9 +53,6 @@ class _GraphicsPageState extends State<GraphicsPage> {
         currentRegisterState.clearExpenseList();
       }
 
-      /*if ( registerData != null ) {
-        expenseData.addNewExpense(registerData);
-      }*/
     }
     
   }
@@ -135,36 +131,6 @@ class _GraphicsPageState extends State<GraphicsPage> {
                 ]   
               ),
             ),
-            /*const Divider(), //Añadir si mas de un mes
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                children: [
-                  MaterialButton(
-                    onPressed: (){
-                      setState(() {
-                        semana = true;
-                      });
-                      Navigator.pop(context);
-                      configCharts();
-                    },
-                    color: semana ? const Color.fromARGB(255, 253, 227, 255) : null,
-                    child: const Text('Semana'),
-                  ),
-                  MaterialButton(
-                    onPressed: (){
-                      setState(() {
-                        semana = false;
-                      });
-                      Navigator.pop(context);
-                      configCharts();
-                    },
-                    color: !semana ? const Color.fromARGB(255, 253, 227, 255) : null,
-                    child: const Text('Mes'),
-                  )
-                ]
-              ),
-            )*/
           ],
         ),
       )
@@ -178,7 +144,7 @@ class _GraphicsPageState extends State<GraphicsPage> {
   void save(){ 
     // create expense item
     ExpenseItem newExpense = ExpenseItem(
-      amountKWh: newExpenseNameController.text, 
+      amountWh: newExpenseNameController.text, 
       amountEuro: newExpenseAmountController.text, 
       dateTime: DateTime.now()
     );
@@ -261,38 +227,8 @@ class _GraphicsPageState extends State<GraphicsPage> {
 
     return Consumer<ExpenseData>( // se retorna un Scaffold
       builder: (context, value, child)  { // nuevo, antes => Scaffold...
-      /*final registerData = registerState.getNewExpense;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if(registerData != null ){
-        addExpenseFromMQTT(registerData);
-        print('Se ha añadido un objeto: ${registerData.amountEuro} €, ${registerData.amountKWh} kWh, ${registerData.dateTime.toString()}');
-      } 
-      });*/
-      
-      
-      return Scaffold( //value es toda la informacion que necesitaremos
-        //backgroundColor: Colors.grey.shade50,
 
-        /*floatingActionButton: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FloatingActionButton(
-              onPressed: (){
-                if(currentRegisterState.getAppConnectionState == MQTTRegisterConnectionState.connected){
-                  mqttManager.publish('updateInfo');
-                }
-                
-              }, //< Si se pulsa el boton flotante del scaffold se abre el cuadro de dialogo para añadir gastos
-              child: const Icon(Icons.update),
-            ),
-            const SizedBox(height: 10,),
-            FloatingActionButton(
-              // Si se pulsa el boton flotante del scaffold se abre el cuadro de dialogo para añadir gastos
-              onPressed: configCharts,
-              child: const Icon(Icons.list),
-            ),
-          ],
-        ),*/
+      return Scaffold( //value es toda la informacion que necesitaremos
 
         appBar: AppBar(
           actions: [
@@ -324,7 +260,7 @@ class _GraphicsPageState extends State<GraphicsPage> {
                     currentDate: _dateTimeWeek,
                     initialDate: DateTime.now(),
                     firstDate: DateTime(2023), 
-                    lastDate: DateTime(2025)
+                    lastDate: DateTime(2029)
                     ).then((value) {
                      setState(() {
                       _dateTimeWeek = value ?? _dateTimeWeek;
@@ -349,89 +285,15 @@ class _GraphicsPageState extends State<GraphicsPage> {
 
             ExpenseSummaryDay(dayToConsult: _dateTimeWeek, euro: euro),
 
-            /*Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: MaterialButton(  
-                onPressed: () {
-                  showDatePicker(
-                    context: context, 
-                    locale: const Locale('es', 'ES'),
-                    currentDate: _dateTimeWeek,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2023), 
-                    lastDate: DateTime(2025)
-                    ).then((value) {
-                     setState(() {
-                      _dateTimeWeek = value ?? _dateTimeWeek;
-                    });
-                  });   
-                }, //abre el caleadario
-                child: Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20, right: 5),
-                      child: Icon(Icons.calendar_month),
-                    ),
-                    Text( //rango de fecha
-                      '${goToMonday(_dateTimeWeek).day} ${nombreMes(goToMonday(_dateTimeWeek))} - ${goToMonday(_dateTimeWeek).add(const Duration(days: 6)).day} ${nombreMes(goToMonday(_dateTimeWeek).add(const Duration(days: 6)))}',
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                  ],
-                ),
-              ),
-            ),*/
-
             // wekkly summary -> grafico de gastos
             ExpenseSummaryWeek(startOfWeek: value.startOfWeekDate(_dateTimeWeek), euro: euro), // el metodo startOfWeekDate() proviene de ExpenseData
-            
-            /*Padding(
-              padding: const EdgeInsets.only(top: 30.0),
-              child: MaterialButton(  
-                onPressed: () {
-                  showDatePicker(
-                    context: context, 
-                    locale: const Locale('es', 'ES'),
-                    initialDate: _dateTimeMonth,
-                    firstDate: DateTime(2023), 
-                    lastDate: DateTime(2025)
-                    ).then((value) {
-                     setState(() {
-                      _dateTimeMonth = value ?? _dateTimeMonth;
-                    });
-                  });   
-                }, //abre el caleadario
-                child: Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20, right: 5),
-                      child: Icon(Icons.calendar_month),
-                    ),
-                    Text( //rango de fecha
-                      '${nombreMes(_dateTimeMonth)} ${_dateTimeMonth.year}',
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                  ],
-                ),
-              ),
-            ),*/
+
             //ExpenseSummaryWeek(startOfWeek: value.startOfWeekDate(), euro: false),
             Padding(
               padding: const EdgeInsets.only(bottom: 30.0),
               child: ExpenseSummaryMonth(startOfMonth: goToFirstDay(_dateTimeWeek), euro: euro),
             )
             
-            //expense list -> lista de gastos
-            /*ListView.builder( // siempre que representamos una lista dentro de una lista debemos añadir shrinkwrap y physics:
-            shrinkWrap: true, // Creates a scrollable, linear array of widgets that are created on demand.
-            physics: const NeverScrollableScrollPhysics(), //para que no se pueda scrollear sino que solo muestre lo ultimo
-            itemCount: value.getAllExpenseList().length,
-            itemBuilder: (context, index) => ListTile( // Representa la lista
-              title: Text(value.getAllExpenseList()[index].amountKWh),
-              subtitle: Text(value.getAllExpenseList()[index].dateTime.toString()),
-              trailing: Text(value.getAllExpenseList()[index].amountEuro),
-            )),*/
           ],
         ),
       );

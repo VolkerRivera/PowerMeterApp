@@ -188,9 +188,9 @@ class ExpenseData extends ChangeNotifier{
     return hourlyExpenseEuroSummary;
   }
 
-  Map<String, double> calculateHourlyExpenseSummarykWh(){
+  Map<String, double> calculateHourlyExpenseSummaryWh(){
     //inicializammos el mapa
-    Map<String, double> hourlyExpensekWhSummary = {
+    Map<String, double> hourlyExpenseWhSummary = {
       // date (yyyymmddhh : totalAmountForHour)
     };
 
@@ -200,18 +200,18 @@ class ExpenseData extends ChangeNotifier{
       // formamos la clave
       String date = convertDateTimeToHourString(expense.dateTime); // Para que irtere bien esta fecha tiene que tener el formato del video
       // formamos el valor
-      double amount = double.parse(expense.amountKWh);
+      double amount = double.parse(expense.amountWh);
       
-      if(hourlyExpensekWhSummary.containsKey(date)){ //si lo tiene suma nuevo valor a la key
-        double currentAmount = hourlyExpensekWhSummary[date]!;
+      if(hourlyExpenseWhSummary.containsKey(date)){ //si lo tiene suma nuevo valor a la key
+        double currentAmount = hourlyExpenseWhSummary[date]!;
         currentAmount += amount;
-        hourlyExpensekWhSummary[date] = currentAmount;
+        hourlyExpenseWhSummary[date] = currentAmount;
 
       }else{//si no lo tiene sañade nueva key entry
-        hourlyExpensekWhSummary.addAll({date: amount});
+        hourlyExpenseWhSummary.addAll({date: amount});
       }
     }
-    return hourlyExpensekWhSummary;
+    return hourlyExpenseWhSummary;
   }
 
   Map<String, double> calculateDailyExpenseSummarykWh() {
@@ -226,7 +226,7 @@ class ExpenseData extends ChangeNotifier{
     for (var expense in overallExpenseList) {
       String date = convertDateTimeToString(expense
           .dateTime); // Para que irtere bien esta fecha tiene que tener el formato del video
-      double amount = double.parse(expense.amountKWh);
+      double amount = double.parse(expense.amountWh)/1000; // lista total esta en Wh => al iterar vamos pasando a kWh
 
       if (dailyExpensekWhSummary.containsKey(date)) {
         //suma todos los que coincidan en fecha

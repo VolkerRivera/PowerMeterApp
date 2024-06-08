@@ -12,7 +12,7 @@ class MQTTRegisterState with ChangeNotifier{
   //Estados que vamos a compartir con el resto de los widget
   MQTTRegisterConnectionState _appConnectionState = MQTTRegisterConnectionState.disconnected;
   String _receivedText = ''; // lo que se recibe en el topic
-  final ExpenseItem _newExpense = ExpenseItem(amountKWh: '0.005', amountEuro: '0.003', dateTime: DateTime.now());
+  final ExpenseItem _newExpense = ExpenseItem(amountWh: '0.005', amountEuro: '0.003', dateTime: DateTime.now());
   // ignore: prefer_final_fields
   List<ExpenseItem> _expenseListThisDay = [];
   

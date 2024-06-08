@@ -31,7 +31,7 @@ void saveData(List<ExpenseItem> allExpense){
   for (var expense in allExpense){
     // convert each ExpenseItem into a list of storable types (strings, dateTime)
     List<dynamic> expenseFormatted = [
-      expense.amountKWh,
+      expense.amountWh,
       expense.amountEuro,
       expense.dateTime
     ];
@@ -78,7 +78,7 @@ void saveData(List<ExpenseItem> allExpense){
 
       // create expense item
       ExpenseItem expense = ExpenseItem
-      (amountKWh: amountKWh, 
+      (amountWh: amountKWh, 
       amountEuro: amountEuro, 
       dateTime: dateTime);
 
