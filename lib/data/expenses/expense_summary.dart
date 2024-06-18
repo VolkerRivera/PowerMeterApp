@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:power_meter/data/expense_data.dart';
+import 'package:power_meter/data/expenses/expense_data.dart';
 import 'package:power_meter/datetime/date_time_helper.dart';
 import 'package:power_meter/presentation/items/bar%20graph/bar_graph.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +11,6 @@ class ExpenseSummaryWeek extends StatelessWidget {
     super.key, 
     required this.startOfWeek, 
     required this.euro});
-
-    
 
     // calculate max amount in bar graph
     double calculateMaxThisWeek( // referente a 1 semana
@@ -58,9 +56,6 @@ class ExpenseSummaryWeek extends StatelessWidget {
         //get largest amount (which is at the end of the list)
         max = values.last * 1.1;
       }
-      
-
-      
       return max == 0 ? 100 : max;
     }
 
@@ -153,7 +148,7 @@ class ExpenseSummaryWeek extends StatelessWidget {
               ),
             ),
             ),
-          SizedBox( //necesario entender este percal
+          SizedBox(
             height: 275,
             child: euro ?
             MyBarGraphWeek( // es aqui donde se dara valor al grafico
@@ -192,17 +187,15 @@ class ExpenseSummaryMonth extends StatelessWidget {
 
   // calculate num days this month
   int numDiasThisMonth(){
-    //DateTime lastOfMonth = startOfMonth.subtract(const Duration(days: 1)); //restamos 1 al primer dia para saber cual es el ultimo del mes
-    //ultimo dia de mes actual = ( 1 / mes actual + 1 mes / año actual ) - 1 dia
     DateTime lastOfMonth = DateTime(startOfMonth.year, startOfMonth.month + 1, 1).subtract(const Duration(days: 1));
     int numDias = lastOfMonth.day;
     return numDias;
   }
+
   //calculate total amount this month
   String calculateMonthTotal(ExpenseData value){
     double total = 0;
     int numDias = numDiasThisMonth();
-    //DateTime startThisMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
 
     if(euro){
       // generamos la lista en base al numero de dias
@@ -489,14 +482,14 @@ class ExpenseSummaryDay extends StatelessWidget {
                           const TextSpan(
                             text: 'Total día: ',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold, // Pone el texto en negrita
-                              color: Colors.black, // Color del texto
+                              fontWeight: FontWeight.bold, 
+                              color: Colors.black, 
                             ),
                           ),
                           TextSpan( // consumo.string
                             text: '${calculateDayTotal(value)} ${euro ? '€' : 'Wh'}',
                             style: const TextStyle(
-                            color: Colors.black, // Color del texto
+                            color: Colors.black, 
                             ),
                           ),
                         ],

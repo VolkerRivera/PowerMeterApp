@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:power_meter/presentation/models/expense_item.dart';
+import 'package:power_meter/data/expenses/expense_item.dart';
 
 class HiveDatabase {
   // reference our box

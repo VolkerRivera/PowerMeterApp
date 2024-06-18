@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:power_meter/mqtt/mqtt_manager.dart';
-import 'package:power_meter/mqtt/multicast_dns_mqtt.dart';
 import 'package:power_meter/mqtt/state/mqtt_power_state.dart';
 import 'package:power_meter/mqtt/state/mqtt_register_state.dart';
-import 'package:power_meter/presentation/items/card.dart';
+import 'package:power_meter/presentation/items/card/card.dart';
 import 'package:provider/provider.dart';
 import 'package:nsd/nsd.dart';
 
@@ -25,7 +24,7 @@ class _MQTTViewState extends State<MQTTView>{
   /* Variables de estado y management mqtt */
   late MQTTPowerState currentAppState;
   late MQTTRegisterState currentRegisterState;
-  late DiscoverServices discover;
+
   
   bool firstmDNSscan = true;
 
@@ -44,8 +43,7 @@ class _MQTTViewState extends State<MQTTView>{
   @override
   Widget build(BuildContext context) {
     final MQTTPowerState appState = Provider.of<MQTTPowerState>(context); //Cambios de estado de los que nos informa el provider. (desde notifyListeners)
-    // añadir provider of MQTTRegisterState
-    currentAppState = appState; // lo registramos
+    currentAppState = appState;
     final MQTTRegisterState registerState = Provider.of<MQTTRegisterState>(context);
     currentRegisterState = registerState;
     final Scaffold scaffold = Scaffold(
@@ -55,7 +53,7 @@ class _MQTTViewState extends State<MQTTView>{
 
   Widget _buildColumn() {
     
-    return ListView( //Columna de widgets de la pantalla de en medio
+    return ListView(
       children: [
         const SizedBox(height: 20,),
         _buildConnectionStateText(),
@@ -66,7 +64,6 @@ class _MQTTViewState extends State<MQTTView>{
         _buildPowerFactorRow(currentAppState.getPowerData),
         _buildFrecuencyRow(currentAppState.getPowerData),
         _buildConnectButton(currentAppState.getPowerConnectionState),
-        //_buildScrollableTextWith(currentAppState.getReceivedText),
       ],
     );
   }
@@ -87,27 +84,26 @@ class _MQTTViewState extends State<MQTTView>{
   }
 
  void _configureAndConnect() async {
-  String identifier = await _getLocalIpAddress();
-  //if(Platform.isIOS){
-    String ip = '';
-    final discoveryIOS = await startDiscovery('_mqtt._tcp', autoResolve: true, ipLookupType: IpLookupType.v4);
-    discoveryIOS.addServiceListener((service, status) {
-      if(status == ServiceStatus.found){
-        InternetAddress newAdress =  service.addresses!.first;
-        ip = newAdress.address;
-        mqttManager = MQTTManager(
-          host: ip, // Set the host to the discovered service name
-          topicMeasure: 'broker/measure',
-          topicRegister: 'broker/register',
-          identifier: identifier,
-          powerState: currentAppState,
-          registerState: currentRegisterState
-        );
+  String identifier = await _getLocalIpAddress();  // ip host
+  String ip = ''; // ip esp8266
+  final discoveryIOS = await startDiscovery('_mqtt._tcp', autoResolve: true, ipLookupType: IpLookupType.v4); // descubre servicio mqtt y resuelve la ip
+  discoveryIOS.addServiceListener((service, status) {
+    if(status == ServiceStatus.found){
+      InternetAddress newAdress =  service.addresses!.first;
+      ip = newAdress.address;
+      mqttManager = MQTTManager(
+        host: ip, 
+        topicMeasure: 'broker/measure',
+        topicRegister: 'broker/register',
+        identifier: identifier,
+        powerState: currentAppState,
+        registerState: currentRegisterState
+      );
 
-        mqttManager.initializeMQTTClient();
-        mqttManager.connect();
-      }
-    });
+      mqttManager.initializeMQTTClient();
+      mqttManager.connect();
+    }
+  });
 
 }
 
@@ -209,7 +205,7 @@ void _disconnect() {
       );
   }
   
-  _buildScrollableTextWith(String mensajeRecibido) {
+  /*_buildScrollableTextWith(String mensajeRecibido) { // depuracion del mensaje recibido en el topic
   return Expanded(
     child: SingleChildScrollView(
       child: Padding(
@@ -218,6 +214,6 @@ void _disconnect() {
       ),
     ),
   );
-}
+}*/
 
 }

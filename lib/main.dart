@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:power_meter/data/expense_data.dart';
+import 'package:power_meter/data/expenses/expense_data.dart';
 import 'package:power_meter/mqtt/state/mqtt_power_state.dart';
 import 'package:power_meter/mqtt/state/mqtt_register_state.dart';
 import 'package:power_meter/presentation/screens/graphics_screen.dart';
 import 'package:power_meter/presentation/screens/mqtt_view_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-//import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   // initialize hive
   await Hive.initFlutter();
-  //await Hive.deleteBoxFromDisk('expense_database4');
+  await Hive.deleteBoxFromDisk('expense_database4');
   // open a hive box
-  //await Hive.deleteBoxFromDisk('expense_database4');
   await Hive.openBox('expense_database4');
 
   runApp(

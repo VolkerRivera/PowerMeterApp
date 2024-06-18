@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:power_meter/data/hive_database.dart';
 import 'package:power_meter/datetime/date_time_helper.dart';
-import 'package:power_meter/presentation/models/expense_item.dart';
+import 'package:power_meter/data/expenses/expense_item.dart';
 
 class ExpenseData extends ChangeNotifier{
   // lista de TODOS los gastos

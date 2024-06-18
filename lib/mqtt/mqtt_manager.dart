@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print
 
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -26,7 +25,7 @@ class MQTTManager {
       required MQTTRegisterState registerState,
       })
       : _identifier = identifier,
-        _host = host, //url
+        _host = host, //ip esp8266
         _topicMeasure = topicMeasure,
         _topicRegister = topicRegister,
         _currentPowerState = powerState,
@@ -53,7 +52,7 @@ class MQTTManager {
       .withWillMessage('My Will message') //mensaje que publica en ese topic
       .startClean() // Non persistent session for testing. Una sesion limpia no guarda el estado de las conexiones
       .withWillQos(MqttQos.atMostOnce); //El mensaje de testamento se entregara al menos una vez
-      print('EXAMPLE:MQTT Client connecting....');
+      //print('EXAMPLE:MQTT Client connecting....');
       _client!.connectionMessage = connMess;
   }
 
@@ -62,19 +61,20 @@ class MQTTManager {
   void connect() async {
     assert(_client != null);//verifica que el cliente no sea nulo
     try {
-      print('EXAMPLE::MQTT start client connecting....');
+      //print('EXAMPLE::MQTT start client connecting....');
       _currentPowerState.setAppConnectionState(MQTTPowerConnectionState.connecting); //cambia estado de conexion a conectanado
       _currentRegisterState.setAppConnectionState(MQTTRegisterConnectionState.connecting);
       await _client!.connect(); //intenta conectarse con el servidor de forma asincrona
     } on Exception catch (e) {//si hay algun error lo printeamos y desconecamos
       //pueden haber excepciones de red, timeout, credenciales incorrectas, conf cliente, error en el server...
+      // ignore: avoid_print
       print('EXAMPLE::client exception - $e');
       disconnect();
     }
   }
 
   void disconnect() {
-    print('Disconnected');
+    //print('Disconnected');
     _client!.unsubscribe(_topicMeasure); //nuevo
     _client!.unsubscribe(_topicRegister); //nuevo
     _client!.disconnect();
@@ -83,22 +83,20 @@ class MQTTManager {
   void publish(String message) {
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder(); //instancia para construir la carga util del mensaje
     builder.addString(message); //construiccion del payload con el string
-    //_client!.publishMessage(_topicMeasure, MqttQos.atMostOnce, builder.payload!); //publucacion en el topic
     _client!.publishMessage(_topicRegister, MqttQos.atMostOnce, builder.payload!);
-    //MqttQos.exactlyOnce garantiza que el mensaje se entregara una sola vez
   }
 
   /// The subscribed callback
   void onSubscribed(String topic) {
-    print('EXAMPLE::Subscription confirmed for topic $topic');
+    //print('EXAMPLE::Subscription confirmed for topic $topic');
   }
 
   /// The unsolicited disconnect callback
   void onDisconnected() {
-    print('EXAMPLE::OnDisconnected client callback - Client disconnection');
+    //print('EXAMPLE::OnDisconnected client callback - Client disconnection');
     if (_client!.connectionStatus!.returnCode ==
       MqttConnectReturnCode.noneSpecified) {
-      print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
+      //print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
     }
     _currentPowerState.setAppConnectionState(MQTTPowerConnectionState.disconnected); // Cambia el estado de conexion a desconectado
     _currentRegisterState.setAppConnectionState(MQTTRegisterConnectionState.disconnected);
@@ -108,7 +106,7 @@ class MQTTManager {
   void onConnected() {
     _currentPowerState.setAppConnectionState(MQTTPowerConnectionState.connected); //cambia el estado de conexion a conectado
     _currentRegisterState.setAppConnectionState(MQTTRegisterConnectionState.connected);
-    print('EXAMPLE::MQTT client connected....');
+    //print('EXAMPLE::MQTT client connected....');
     //se suscribe al tema. garantiza que el mensaje sera entregado al menos una vez
     _client!.subscribe(_topicMeasure, MqttQos.atMostOnce); 
     _client!.subscribe(_topicRegister, MqttQos.atMostOnce); 
@@ -118,7 +116,7 @@ class MQTTManager {
       c?.forEach((MqttReceivedMessage<MqttMessage?> message) {
         final MqttPublishMessage recMess = message.payload as MqttPublishMessage;
         final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-        print('EXAMPLE::Change notification:: topic is <${message.topic}>, payload is <-- $pt -->');
+       //print('EXAMPLE::Change notification:: topic is <${message.topic}>, payload is <-- $pt -->');
 
         // Lógica para procesar mensajes según el tópico
         if (message.topic == _topicMeasure) {
@@ -126,10 +124,10 @@ class MQTTManager {
         } else if (message.topic == _topicRegister) {
           _currentRegisterState.setReceivedText(pt);
         }
-        print('EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
-        print('');
+        //print('EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
+        //print('');
       });
-        print('EXAMPLE::OnConnected client callback - Client connection was sucessful');
+        //print('EXAMPLE::OnConnected client callback - Client connection was sucessful');
     });   
   }
 }

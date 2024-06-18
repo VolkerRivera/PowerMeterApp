@@ -1,9 +1,8 @@
-// ignore_for_file: avoid_print
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:power_meter/presentation/models/expense_item.dart';
+import 'package:power_meter/data/expenses/expense_item.dart';
 
 enum MQTTRegisterConnectionState { connected, disconnected, connecting }
 
@@ -12,7 +11,6 @@ class MQTTRegisterState with ChangeNotifier{
   //Estados que vamos a compartir con el resto de los widget
   MQTTRegisterConnectionState _appConnectionState = MQTTRegisterConnectionState.disconnected;
   String _receivedText = ''; // lo que se recibe en el topic
-  final ExpenseItem _newExpense = ExpenseItem(amountWh: '0.005', amountEuro: '0.003', dateTime: DateTime.now());
   // ignore: prefer_final_fields
   List<ExpenseItem> _expenseListThisDay = [];
   
@@ -30,19 +28,20 @@ class MQTTRegisterState with ChangeNotifier{
           line = line.trim();  
 
           if (line.isNotEmpty) { // Solo analizamos líneas no vacías
-            print(line);
+            //print(line);
             Map<String, dynamic> jsonData = jsonDecode(line);
             ExpenseItem expenseItem = ExpenseItem.fromJson(jsonData);
             _expenseListThisDay.add(expenseItem);
           }
         }
         if (hasListeners) { //si hay listeners, se notifica
-          print('JSON procesado correctamente');
+          //print('JSON procesado correctamente');
           notifyListeners();
         }
       }
 
     }catch(e){
+      // ignore: avoid_print
       print('El texto recibido no es un JSON válido: $e');
     
     }   
@@ -60,7 +59,7 @@ class MQTTRegisterState with ChangeNotifier{
   String get getReceivedText => _receivedText;
   MQTTRegisterConnectionState get getAppConnectionState => _appConnectionState;
   List<ExpenseItem> get getExpenseList => _expenseListThisDay;
-  ExpenseItem get getNewExpense => _newExpense;
+
 
   void clearExpenseList() {
     _expenseListThisDay = [];

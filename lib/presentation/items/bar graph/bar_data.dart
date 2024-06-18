@@ -69,10 +69,9 @@ class BarDataMonth{
   List<IndividualBar> barData = [
     ];
 
-  List<String> titleWeekRange = []; //pendiente inicializar las semanas
+  List<String> titleWeekRange = [];
 
   //initialize bottom titles, week ranges
-
   void initializeTitleWeekRange(){
     
 
@@ -86,8 +85,6 @@ class BarDataMonth{
       if(diaDeLaSemana == 7 || diaDelMes == numDias){ //si domingo o ultimo dia de mes
 
           String newRange = '${from.day} ${nombreMes(from)}';
-          //String newRange = '${from.day} ${nombreMes(from)} - ${to.day} ${nombreMes(to)}'; // creamos string a partir del rango
-          //String newRange = '${from.day}/${from.month} - ${to.day}/${to.month}';
           titleWeekRange.add(newRange); // la añadimos al grafico
 
           from = from.add(const Duration(days: 7));
@@ -107,7 +104,7 @@ class BarDataMonth{
     int diaDeLaSemana = startOfMonth.weekday;  
     int indexIndividualBar = 0;
 
-    //important: avoid direct memory access, otherwise dart cries, crush and burns
+    // important: avoid direct memory access
     // for example: while(diaActual.day .. && startOfMonth.day ...)
     while(diaDelMes <= numDias){
       consumoSemana = consumoSemana + values.elementAt(diaDelMes - 1); //aumentamos consumo

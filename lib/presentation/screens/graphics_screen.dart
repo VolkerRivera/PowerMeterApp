@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:power_meter/data/expense_data.dart';
+import 'package:power_meter/data/expenses/expense_data.dart';
 import 'package:power_meter/datetime/date_time_helper.dart';
 import 'package:power_meter/mqtt/state/mqtt_register_state.dart';
-import 'package:power_meter/presentation/items/expense_summary.dart';
-import 'package:power_meter/presentation/models/expense_item.dart';
+import 'package:power_meter/data/expenses/expense_summary.dart';
+import 'package:power_meter/data/expenses/expense_item.dart';
 import 'package:power_meter/presentation/screens/mqtt_view_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -17,9 +17,6 @@ class GraphicsPage extends StatefulWidget {
 
 class _GraphicsPageState extends State<GraphicsPage> {
 
-  // text controllers
-  final newExpenseNameController = TextEditingController();
-  final newExpenseAmountController = TextEditingController();
   bool euro = true;
   bool semana = true;
   late MQTTRegisterState currentRegisterState;
@@ -61,38 +58,7 @@ class _GraphicsPageState extends State<GraphicsPage> {
     Provider.of<ExpenseData>(context, listen: false).addNewExpense(newExpense);
   }
   // add new expense -> En nuestro caso tendra que ser actualizar datos y recibirlos de la esp
-  void addNewExpense(){
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add new expense'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min, //< Para que el cuadro de texto no ocupe toda la pantalla
-          children: [
-          // expense name
-            TextField(
-              controller: newExpenseNameController,
-            ),
-          // expense amount
-            TextField(
-              controller: newExpenseAmountController,
-            )
-          ],
-        ),
-        actions: [
-          //save button
-          MaterialButton(
-            onPressed: save, //Si se pulsa save de dentro del cuadro de dialogo se guardan los datos que hay en los fieldtext
-            child: const Text('Save'),
-          ),
-          //cancel button
-          MaterialButton(
-            onPressed: cancel, //Si se pulsa save de dentro del cuadro de dialogo se guardan los datos que hay en los fieldtext
-            child: const Text('Cancel'),
-          )
-        ],
-      ));
-  }
+
 
   void configCharts(){
     showDialog(
@@ -140,38 +106,10 @@ class _GraphicsPageState extends State<GraphicsPage> {
   // podemos crear los metodos save y cancel debajo ya que no es como en C que tienen que estar previamente definidos
   // Aqui sera donde entre el gestor de estados ya que dependiendo de lo que hagamos ira cambiando lo que se ve en la pantalla
 
-  // save
-  void save(){ 
-    // create expense item
-    ExpenseItem newExpense = ExpenseItem(
-      amountWh: newExpenseNameController.text, 
-      amountEuro: newExpenseAmountController.text, 
-      dateTime: DateTime.now()
-    );
-
-    // Once created, add it to the list
-    Provider.of<ExpenseData>(context, listen: false).addNewExpense(newExpense);
-
-    //despues de guardar se cierra el dialogo
-    Navigator.pop(context); // APRENDER BIEN EL CONCEPTO DE CONTEXT
-    clear();
-  }
 
   // delete expense
   void deleteExpense(){
     Provider.of<ExpenseData>(context, listen: false).deleteExpenses();
-  }
-
-  // cancel
-  void cancel(){
-    Navigator.pop(context);
-    clear();
-  }
-
-  //clear controllers
-  void clear(){
-    newExpenseNameController.clear();
-    newExpenseAmountController.clear();
   }
 
   //get weekday (mon, tues, etc) from DateTime object
@@ -222,11 +160,9 @@ class _GraphicsPageState extends State<GraphicsPage> {
 
   @override
   Widget build(BuildContext context) {
-    //final MQTTRegisterState registerState = Provider.of<MQTTRegisterState>(context, listen: false);
-    //currentRegisterState = registerState;
 
     return Consumer<ExpenseData>( // se retorna un Scaffold
-      builder: (context, value, child)  { // nuevo, antes => Scaffold...
+      builder: (context, value, child)  { 
 
       return Scaffold( //value es toda la informacion que necesitaremos
 
@@ -266,7 +202,7 @@ class _GraphicsPageState extends State<GraphicsPage> {
                       _dateTimeWeek = value ?? _dateTimeWeek;
                     });
                   });   
-                }, //abre el caleadario
+                }, //abre el calendario
                 child: Row(
                   children: [
                     const Padding(

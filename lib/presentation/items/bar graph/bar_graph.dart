@@ -26,7 +26,7 @@ class MyBarGraphWeek extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //initialize Bardata, otherwise we will get null errors
+    //initialize Bardata, otherwise null errors
     BarDataWeek myBarData = BarDataWeek(
       monAmount: monAmount, 
       tueAmount: tueAmount, 
@@ -38,7 +38,7 @@ class MyBarGraphWeek extends StatelessWidget {
     myBarData.initializeBarData();
 
     return Padding(
-      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
+      padding: const EdgeInsets.only(left: 30.0, right: 40.0),
       child: BarChart(
         BarChartData(
           //config eje y
@@ -56,24 +56,36 @@ class MyBarGraphWeek extends StatelessWidget {
             show: true,
           ),
 
-          titlesData: const FlTitlesData(
+          titlesData: FlTitlesData(
             show: true,
-            leftTitles: const AxisTitles(
+            leftTitles:  AxisTitles(
               sideTitles: SideTitles(
-                showTitles: false
+                showTitles: true,
+                interval: maxY!/4,
+                  getTitlesWidget: (value, meta) {
+                  const style = TextStyle(
+                    fontSize: 14,
+                  );
+
+                  // Format the value with one decimal place
+                  String formattedValue = value.toStringAsFixed(2); 
+                  
+                  return Text(formattedValue, style: style); 
+                },
+                reservedSize: 50
               )
             ),
-            rightTitles: AxisTitles(
+            rightTitles: const AxisTitles(
               sideTitles: SideTitles(
                 showTitles: false, // Oculta el eje derecho
               ),
             ),
-            topTitles: AxisTitles(
+            topTitles: const AxisTitles(
               sideTitles: SideTitles(
                 showTitles: false, // Oculta el eje derecho
               ),
             ),
-            bottomTitles: AxisTitles(
+            bottomTitles: const AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
@@ -91,7 +103,7 @@ class MyBarGraphWeek extends StatelessWidget {
                 toY: data.y,
                 color: const Color.fromARGB(255, 130, 108, 255),
                 borderRadius: BorderRadius.circular(2),
-                width: 15.0
+                width: 12.0
               )
             ]
             ))
@@ -147,7 +159,7 @@ Widget getBottomTitlesSingleMonth(double value, TitleMeta meta){
     fontWeight: FontWeight.bold,
     fontSize: 14,
   );
-  Widget text = const Text('data', style: style,);  //= Text('${value.toInt() + 1}', style: style);
+  Widget text = const Text('data', style: style,);
 
   for(int i = 0; i <= value.toInt(); i++){
     text = const Text(' ', style: style);
@@ -182,63 +194,13 @@ class MyBarGraphMonth extends StatelessWidget {
     myBarData.initializeBarData();
     myBarData.initializeTitleWeekRange();
 
-    /*return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
-      child: LineChart(
-        LineChartData(
-          
-          gridData: FlGridData(
-            show: true,
-            drawVerticalLine: false,
-            drawHorizontalLine: true,
-            verticalInterval: (maxY!/2)
-            ),
-          borderData: FlBorderData(show: true),
-          lineBarsData: [
-            LineChartBarData(
-              color: const Color.fromARGB(255, 130, 108, 255),
-              spots: myBarData.barData
-              .map((data) => FlSpot(
-                data.x.toDouble(), 
-                data.y
-              ))
-              .toList()
-              )
-          ],
-          titlesData: const FlTitlesData(
-            topTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false
-              )
-            ),
-            rightTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false
-              )
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 30,
-                
-                //interval: 1
-              ),
-            ), 
-          )
-        )
-        ),
-    );*/
     return Padding(
-      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
+      padding: const EdgeInsets.only(left: 30.0, right: 40.0),
       child: BarChart(
         BarChartData(
           //config eje y
           maxY: maxY,
           minY: 0,
-          /*barTouchData: BarTouchData( //< esto + provider para cambiar datos de semana pinchando en barras, check also GestureDetector
-            touchCallback:(p0, p1) {
-              
-            },),*/
           //style bar graphic
           gridData: const FlGridData(
             show: true,
@@ -247,6 +209,23 @@ class MyBarGraphMonth extends StatelessWidget {
           borderData: FlBorderData(show: true),
           titlesData:  FlTitlesData(
             show: true,
+            leftTitles:  AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: maxY!/4,
+                  getTitlesWidget: (value, meta) {
+                  const style = TextStyle(
+                    fontSize: 14,
+                  );
+
+                  // Format the value with one decimal place
+                  String formattedValue = value.toStringAsFixed(2); 
+                  
+                  return Text(formattedValue, style: style); 
+                },
+                reservedSize: 50
+              )
+            ),
             rightTitles: const AxisTitles(
               sideTitles: SideTitles(
                 showTitles: false, // Oculta el eje derecho
@@ -266,7 +245,7 @@ class MyBarGraphMonth extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   );
-                  Widget text = const Text('data', style: style,);  //= Text('${value.toInt() + 1}', style: style);
+                  Widget text = const Text('data', style: style,); 
 
                   for(int i = 0; i <= value.toInt(); i++){
                     text = Text(myBarData.titleWeekRange.elementAt(i), style: style);
@@ -276,7 +255,6 @@ class MyBarGraphMonth extends StatelessWidget {
                     axisSide: meta.axisSide,
                     child: Transform(
                       origin: const Offset(20, 10),
-                      //origin: Offset(20, 20),
                       transform: Matrix4.identity()..rotateZ(0.8),
                       alignment: AlignmentDirectional.bottomStart,
                       child: text
@@ -297,7 +275,7 @@ class MyBarGraphMonth extends StatelessWidget {
                 toY: data.y,
                 color: const Color.fromARGB(255, 130, 108, 255),
                 borderRadius: BorderRadius.circular(2),
-                width: 15.0
+                width: 12.0
                 )
             ]
             ))
@@ -328,7 +306,7 @@ class MyBarGraphDay extends StatelessWidget {
     myBarData.initializaBarData();
 
     return Padding(
-      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
+      padding: const EdgeInsets.only(left: 30.0, right: 40.0),
       child: BarChart(BarChartData(
         maxY: maxY,
         minY: 0,
@@ -340,7 +318,7 @@ class MyBarGraphDay extends StatelessWidget {
               toY: data.y,
               color: const Color.fromARGB(255, 130, 108, 255),
               borderRadius: BorderRadius.circular(2),
-              width: 15.0
+              width: 12.0
             )
           ]
           ))
@@ -352,9 +330,21 @@ class MyBarGraphDay extends StatelessWidget {
           borderData: FlBorderData(show: true),
           titlesData: FlTitlesData(
             show: true,
-            leftTitles: const AxisTitles(
+            leftTitles:  AxisTitles(
               sideTitles: SideTitles(
-                showTitles: false
+                showTitles: true,
+                interval: maxY!/4,
+                  getTitlesWidget: (value, meta) {
+                  const style = TextStyle(
+                    fontSize: 14,
+                  );
+
+                  // Format the value with one decimal place
+                  String formattedValue = value.toStringAsFixed(2); 
+                  
+                  return Text(formattedValue, style: style); 
+                },
+                reservedSize: 50
               )
             ),
             rightTitles: const AxisTitles(
