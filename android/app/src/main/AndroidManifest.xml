@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <application
-        android:label="power_meter"
+        android:label="Energy Meter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

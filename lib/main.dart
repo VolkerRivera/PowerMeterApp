@@ -11,7 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 Future<void> main() async {
   // initialize hive
   await Hive.initFlutter();
-  await Hive.deleteBoxFromDisk('expense_database4');
+  //await Hive.deleteBoxFromDisk('expense_database4');
   // open a hive box
   await Hive.openBox('expense_database4');
 
